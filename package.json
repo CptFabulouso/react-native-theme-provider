@@ -1,5 +1,5 @@
 {
-  "name": "react-native-theme-provider",
+  "name": "@pavelgric/react-native-theme-provider",
   "version": "0.0.1",
   "description": "Simple theme provider for React Native",
   "main": "lib/index.js",
