@@ -1,5 +1,5 @@
-import { Text, View, ViewStyle, StyleSheet } from "react-native";
-import * as React from "react";
+import * as React from 'react';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 type TestProps = {
   style?: ViewStyle;
@@ -15,8 +15,8 @@ const Test = (props: TestProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
   },
 });

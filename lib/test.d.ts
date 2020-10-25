@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import { ViewStyle } from "react-native";
+import { ViewStyle } from 'react-native';
 declare type TestProps = {
     style?: ViewStyle;
 };
