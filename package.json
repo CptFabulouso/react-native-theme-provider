@@ -1,7 +1,7 @@
 {
   "name": "react-native-theme-provider",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Simple theme provider for React Native",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
