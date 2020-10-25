@@ -1,36 +1,46 @@
 {
-	"name": "react-native-theme-provider",
-	"version": "1.0.0",
-	"description": "",
-	"main": "lib/index.js",
-	"types": "lib/index.d.ts",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"compile": "rm -rf lib && tsc -p .",
-		"prepare": "yarn compile"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/CptFabulouso/react-native-theme-provider.git"
-	},
-	"keywords": [
-		"react-native",
-		"theme"
-	],
-	"author": "Pavel Gric",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/CptFabulouso/react-native-theme-provider/issues"
-	},
-	"homepage": "https://github.com/CptFabulouso/react-native-theme-provider#readme",
-	"devDependencies": {
-		"@types/react": "^16.9.53",
-		"@types/react-native": "^0.63.30",
-		"metro-react-native-babel-preset": "^0.63.0",
-		"typescript": "^4.0.3"
-	},
-	"peerDependencies": {
-		"react": "*",
-		"react-native": "*"
-	}
+  "name": "react-native-theme-provider",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "rm -rf lib && tsc -p .",
+    "prepare": "yarn compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CptFabulouso/react-native-theme-provider.git"
+  },
+  "keywords": [
+    "react-native",
+    "theme"
+  ],
+  "author": "Pavel Gric",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CptFabulouso/react-native-theme-provider/issues"
+  },
+  "homepage": "https://github.com/CptFabulouso/react-native-theme-provider#readme",
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/runtime": "^7.8.4",
+    "@react-native-community/eslint-config": "^1.1.0",
+    "@types/jest": "^25.2.3",
+    "@types/react-native": "^0.63.2",
+    "@types/react-test-renderer": "^16.9.2",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "babel-jest": "^25.1.0",
+    "eslint": "^6.5.1",
+    "jest": "^25.1.0",
+    "metro-react-native-babel-preset": "^0.59.0",
+    "react-test-renderer": "16.13.1",
+    "typescript": "^3.8.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  }
 }
