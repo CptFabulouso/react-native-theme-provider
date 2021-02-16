@@ -8,8 +8,8 @@ import {
 
 export { useStyle };
 
-import { darkTheme } from './variants/darkTheme';
-import { lightTheme } from './variants/lightTheme';
+import darkTheme from './variants/darkTheme';
+import lightTheme from './variants/lightTheme';
 
 export const themes = {
   light: lightTheme,

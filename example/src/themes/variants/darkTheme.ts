@@ -1,7 +1,7 @@
 import { createTheme } from './themeCreator';
 import { pallete } from '../res/colors';
 
-export const darkTheme = createTheme({
+export default createTheme({
   colors: {
     primary: pallete['school-bus-yellow'],
     secondary: pallete['blue-ribbon'],
