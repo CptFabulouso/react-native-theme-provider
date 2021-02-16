@@ -1,5 +1,5 @@
 import { ScrollView } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button, Text } from '@components';
 import { useTheme, useThemeDispatch } from '@themes';
@@ -9,10 +9,15 @@ const HomeScreen = () => {
   const styles = useStyle();
   const { selectedTheme } = useTheme();
   const { setTheme } = useThemeDispatch();
+  const [val, updateVal] = useState(1);
 
   const changeTheme = () => {
     const nextTheme = selectedTheme === 'light' ? 'dark' : 'light';
     setTheme(nextTheme);
+  };
+
+  const updateScreen = () => {
+    updateVal((current) => current + 1);
   };
 
   return (
@@ -31,6 +36,8 @@ const HomeScreen = () => {
       <Text type="caption">caption</Text>
       <Text type="overline">overline</Text>
       <Button label="change theme" onPress={changeTheme} />
+      <Button label="update screen" onPress={updateScreen} />
+      <Text type="h5">{`update cycle: ${val}`}</Text>
     </ScrollView>
   );
 };

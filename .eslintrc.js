@@ -1,3 +1,4 @@
+/* eslint-disable import/no-commonjs */
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -8,6 +9,10 @@ module.exports = {
     'plugin:import/warnings',
   ],
   rules: {
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
+    ],
     'import/namespace': 0,
     'import/default': 0,
     'import/no-named-as-default': 0,
