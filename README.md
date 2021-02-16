@@ -96,11 +96,12 @@ import { useThemeDispatch, useTheme } from '@pavelgric/react-native-theme-provid
 export default SomeComponent = () => {
   // selectedTheme is the key of selected theme
   // themes is the whole themes object
-  const { selectedTheme, themes } = useTheme();
+  // t is current theme object
+  const { selectedTheme, themes, t } = useTheme();
   // to change theme
   const { setTheme } = useThemeDispatch();
 
-  // to access current theme object
+  // to access current theme object, or use t
   const themeObj = themes[selectedTheme];
 
   return(

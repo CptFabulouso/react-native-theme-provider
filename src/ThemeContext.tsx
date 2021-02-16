@@ -30,7 +30,9 @@ export function ThemeProvider<T extends Themes>({
   };
 
   return (
-    <ThemeContext.Provider value={{ selectedTheme: themeName, themes }}>
+    <ThemeContext.Provider
+      value={{ selectedTheme: themeName, themes, t: themes[themeName] }}
+    >
       <ThemeDispatchContext.Provider value={{ setTheme: changeTheme }}>
         {children}
       </ThemeDispatchContext.Provider>
