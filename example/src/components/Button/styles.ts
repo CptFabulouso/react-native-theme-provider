@@ -1,6 +1,6 @@
-import { createStyle } from '@themes';
+import { createUseStyle } from '@themes';
 
-export default createStyle((t) => ({
+export default createUseStyle((t) => ({
   container: {
     backgroundColor: t.colors.primary,
     padding: t.spacing.m,

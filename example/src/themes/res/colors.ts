@@ -7,17 +7,3 @@ export const pallete = {
   amber: '#ffc000',
   monza: '#b00020',
 };
-
-export type ColorPallete = typeof pallete;
-
-export const Colors = {
-  primary: pallete['blue-ribbon'],
-  secondary: pallete['school-bus-yellow'],
-  surface: pallete.white,
-  onPrimary: pallete.white,
-  onSecondary: pallete.black,
-  onSurface: pallete.black,
-  primaryVariant: pallete.cobalt,
-  secondaryVariant: pallete.amber,
-  error: pallete.monza,
-};

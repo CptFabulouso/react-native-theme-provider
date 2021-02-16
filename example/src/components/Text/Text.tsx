@@ -1,8 +1,8 @@
 import { Text as RNText, TextProps } from 'react-native';
 import React, { ReactNode } from 'react';
 
-import { Typography, useStyle } from '@themes';
-import styleCreator from './styles';
+import { Typography } from '@themes';
+import useStyle from './styles';
 
 type Props = TextProps & {
   type?: keyof Typography;
@@ -10,7 +10,7 @@ type Props = TextProps & {
 };
 
 const Text = ({ type, ...textProps }: Props) => {
-  const styles = useStyle(styleCreator);
+  const styles = useStyle();
   const styleByType = type ? styles[type] : styles.basic;
 
   return (

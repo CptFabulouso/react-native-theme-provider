@@ -3,6 +3,10 @@
 - [React Native Theme Provider](#react-native-theme-provider)
   - [Installation](#installation)
   - [Usage](#usage)
+    - [Create themes](#create-themes)
+    - [Wrap app with ThemeProvider with created themes](#wrap-app-with-themeprovider-with-created-themes)
+    - [Access theme from any component](#access-theme-from-any-component)
+    - [Lastly to change or access theme](#lastly-to-change-or-access-theme)
   - [Typescript usage](#typescript-usage)
   - [Recommendations](#recommendations)
   - [Example](#example)
@@ -13,7 +17,7 @@
 
 ## Usage
 
-Create themes
+### Create themes
 
 ```js
 // themes.js
@@ -37,7 +41,7 @@ export const themes = {
 };
 ```
 
-Wrap app with ThemeProvider with created themes
+### Wrap app with ThemeProvider with created themes
 
 ```js
 // App.js
@@ -58,7 +62,7 @@ export default App = () => {
 }
 ```
 
-Access theme from any component
+### Access theme from any component
 
 ```js
 // InnerComponent.js
@@ -84,7 +88,32 @@ export default InnerComponent = () => {
 }
 ```
 
-Lastly to change or access theme
+Alternatively you can use `createUseStyle` helper function to remove few lines of code
+ 
+```js
+// InnerComponent.js
+
+import React from 'react';
+import { View } from 'react-native';
+import { createUseStyle } from '@pavelgric/react-native-theme-provider';
+
+// createUseStyle basically returns (fn) => useStyle(fn)
+const useStyle = createUseStyle((t) => ({
+  container: {
+    backgroundColor: t.colors.primary
+  },
+}));
+
+export default InnerComponent = () => {
+  const styles = useStyle();
+
+  return (
+    <View style={styles.container} />
+  )
+}
+```
+
+### Lastly to change or access theme
 
 ```js
 // SomeComponent.js
@@ -128,6 +157,7 @@ Define your themes and use creator functions
 // themes.js
 import {
   createStyleCreator,
+  createUseStyleCreator,
   createUseTheme,
   createUseThemeDispatch,
   useStyle,
@@ -155,6 +185,7 @@ export type Themes = typeof themes;
 // useStyle does not depend on Theme, this is just to make it also accessible from here
 export { useStyle };
 export const createStyle = createStyleCreator<Themes>();
+export const createUseStyle = createUseStyleCreator<Themes>();
 export const useTheme = createUseTheme<Themes>();
 export const useThemeDispatch = createUseThemeDispatch<Themes>();
 ```
@@ -162,19 +193,19 @@ export const useThemeDispatch = createUseThemeDispatch<Themes>();
 now instead of importing the functions directly from this package
 
 ```js
-import { createStyle, useTheme, useThemeDispatch, useStyle } from '@pavelgric/react-native-theme-provider';
+import { createStyle, createUseStyle, useTheme, useThemeDispatch, useStyle } from '@pavelgric/react-native-theme-provider';
 ```
 
 you import them from the `themes.js` file
 
 ```js
-import { createStyle, useTheme, useThemeDispatch, useStyle } from './path/to/themes.js';
+import { createStyle, createUseStyle, useTheme, useThemeDispatch, useStyle } from './path/to/themes.js';
 ```
 
 now these functions are typed
 
 ```js
-import { createStyle } from './path/to/themes.js';
+import { createStyle, /* or createUseStyle */ } from './path/to/themes.js'; 
 // t is now of type Theme
 const styleCreator = createStyle((t) => ({
   container: {

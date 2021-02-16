@@ -5,10 +5,9 @@
  * @format
  */
 
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable import/no-commonjs */
 const path = require('path');
 const blacklist = require('metro-config/src/defaults/blacklist');
-/* eslint-enable @typescript-eslint/no-var-requires */
 
 const moduleRoot = path.resolve(__dirname, '..');
 

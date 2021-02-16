@@ -6,8 +6,7 @@ import {
 import React from 'react';
 
 import { Text } from '../Text/Text';
-import { useStyle } from '@themes';
-import styleCreator from './styles';
+import useStyle from './styles';
 
 type Props = TouchableOpacityProps & {
   label: string;
@@ -15,7 +14,7 @@ type Props = TouchableOpacityProps & {
 };
 
 const Button = ({ label, labelStyle, ...touchableProps }: Props) => {
-  const styles = useStyle(styleCreator);
+  const styles = useStyle();
 
   return (
     <TouchableOpacity

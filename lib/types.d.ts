@@ -11,6 +11,7 @@ export declare type StyleObj<S extends NamedStyles<S> | NamedStyles<any>> = S;
 export declare type ThemeContextValue<T extends Themes> = {
     selectedTheme: ExtractThemeNames<T>;
     themes: T;
+    t: ExtractThemes<T>;
 };
 export declare type ThemeDispatchContextValue<T extends Themes> = {
     setTheme: (t: ExtractThemeNames<T>) => void;

@@ -2,11 +2,11 @@ import { ScrollView } from 'react-native';
 import React from 'react';
 
 import { Button, Text } from '@components';
-import { useStyle, useTheme, useThemeDispatch } from '@themes';
-import styleCreator from './styles';
+import { useTheme, useThemeDispatch } from '@themes';
+import useStyle from './styles';
 
 const HomeScreen = () => {
-  const styles = useStyle(styleCreator);
+  const styles = useStyle();
   const { selectedTheme } = useTheme();
   const { setTheme } = useThemeDispatch();
 
