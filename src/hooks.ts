@@ -10,15 +10,16 @@ import {
 } from './types';
 import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 
-export function useStyle<S extends NamedStyles<S> | NamedStyles<any>>(
-  styleCreator: StyleCreator<any, S>,
+export function useStyle<S extends NamedStyles<S> | NamedStyles<any>, P>(
+  styleCreator: StyleCreator<any, S, P>,
+  params: P,
 ): StyleObj<S> {
   const { selectedTheme, themes } = useTheme();
 
   const styles = React.useMemo(() => {
     const theme = themes[selectedTheme];
-    return styleCreator(theme);
-  }, [styleCreator, selectedTheme, themes]);
+    return styleCreator(theme, params);
+  }, [styleCreator, selectedTheme, themes, params]);
 
   return styles;
 }

@@ -28,5 +28,10 @@ export type ThemeContextProps<T extends Themes> = {
 
 export type StyleCreator<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>
-> = (themes: ExtractThemes<T>) => StyleObj<S>;
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+> = (themes: ExtractThemes<T>, params: P) => StyleObj<S>;
+
+export type UseStyleCreator<S extends NamedStyles<S> | NamedStyles<any>, P> = (
+  params: P,
+) => StyleObj<S>;

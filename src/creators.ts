@@ -1,4 +1,4 @@
-import { NamedStyles, StyleCreator, StyleObj, Themes } from './types';
+import { NamedStyles, StyleCreator, Themes, UseStyleCreator } from './types';
 import { useStyle, useTheme, useThemeDispatch } from './hooks';
 
 export function createUseTheme<T extends Themes>() {
@@ -15,30 +15,32 @@ export function createUseThemeDispatch<T extends Themes>() {
 
 export function createStyle<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>
->(fn: StyleCreator<T, S>): StyleCreator<T, S> {
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(fn: StyleCreator<T, S, P>): StyleCreator<T, S, P> {
   return fn;
 }
 
 export function createUseStyle<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>
->(styleCreator: StyleCreator<T, S>): () => StyleObj<S> {
-  return () => useStyle<S>(styleCreator);
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(styleCreator: StyleCreator<T, S, P>): UseStyleCreator<S, P> {
+  return (params: P) => useStyle<S, P>(styleCreator, params);
 }
 
 export function createStyleCreator<T extends Themes>() {
-  return function <S extends NamedStyles<S> | NamedStyles<any>>(
-    fn: StyleCreator<T, S>,
-  ): StyleCreator<T, S> {
-    return createStyle<T, S>(fn);
+  return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
+    fn: StyleCreator<T, S, P>,
+  ): StyleCreator<T, S, P> {
+    return createStyle<T, S, P>(fn);
   };
 }
 
 export function createUseStyleCreator<T extends Themes>() {
-  return function <S extends NamedStyles<S> | NamedStyles<any>>(
-    fn: StyleCreator<T, S>,
-  ): () => StyleObj<S> {
-    return createUseStyle(createStyle<T, S>(fn));
+  return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
+    fn: StyleCreator<T, S, P>,
+  ): UseStyleCreator<S, P> {
+    return createUseStyle(createStyle<T, S, P>(fn));
   };
 }

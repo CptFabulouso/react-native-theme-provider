@@ -10,11 +10,14 @@ type Props = TextProps & {
 };
 
 const Text = ({ type, ...textProps }: Props) => {
-  const styles = useStyle();
-  const styleByType = type ? styles[type] : styles.basic;
+  const styles = useStyle({ type });
+
+  if (type) {
+    //
+  }
 
   return (
-    <RNText {...textProps} style={[styleByType, textProps.style]}>
+    <RNText {...textProps} style={[styles.styleByType, textProps.style]}>
       {textProps.children}
     </RNText>
   );
