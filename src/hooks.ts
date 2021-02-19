@@ -1,18 +1,14 @@
 import * as React from 'react';
 
+import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 import {
-  NamedStyles,
-  StyleCreator,
-  StyleCreatorWithParams,
-  StyleObj,
   ThemeContextValue,
   ThemeDispatchContextValue,
   Themes,
   UseStyle,
 } from './types';
-import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 
-export const useStyle: UseStyle<any> = (styleCreator: any, params?: any) => {
+export const useStyle: UseStyle<any> = (styleCreator, params) => {
   const { selectedTheme, themes } = useTheme();
 
   const styles = React.useMemo(() => {

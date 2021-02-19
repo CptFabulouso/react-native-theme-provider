@@ -34,36 +34,37 @@ export type StyleCreator<
 export type StyleCreatorWithParams<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P = any
+  P = undefined
 > = (themes: ExtractThemes<T>, params: P) => StyleObj<S>;
 
-export interface UseStyle<T extends Themes> {
-  <S extends NamedStyles<S> | NamedStyles<any>>(
-    styleCreator: StyleCreator<T, S>,
-  ): StyleObj<S>;
+// export interface UseStyle<T extends Themes> {
+//   <S extends NamedStyles<S> | NamedStyles<any>>(
+//     styleCreator: StyleCreator<T, S>,
+//   ): StyleObj<S>;
 
-  <S extends NamedStyles<S> | NamedStyles<any>, P = any>(
-    styleCreator: StyleCreatorWithParams<T, S, P>,
-    params: P,
-  ): StyleObj<S>;
-}
+//   <S extends NamedStyles<S> | NamedStyles<any>, P = undefined>(
+//     styleCreator: StyleCreatorWithParams<T, S, P>,
+//     params: P,
+//   ): StyleObj<S>;
+// }
+
+export type UseStyle<T extends Themes, P = undefined> = P extends undefined
+  ? <S extends NamedStyles<S> | NamedStyles<any>>(
+      styleCreator: StyleCreatorWithParams<T, S, P>,
+    ) => StyleObj<S>
+  : <S extends NamedStyles<S> | NamedStyles<any>>(
+      styleCreator: StyleCreatorWithParams<T, S, P>,
+      params: P,
+    ) => StyleObj<S>;
 
 export interface CreateStyle<T extends Themes> {
-  <S extends NamedStyles<S> | NamedStyles<any>>(
-    styleCreator: StyleCreator<T, S>,
-  ): StyleCreator<T, S>;
-
-  <S extends NamedStyles<S> | NamedStyles<any>, P>(
+  <S extends NamedStyles<S> | NamedStyles<any>, P = undefined>(
     styleCreator: StyleCreatorWithParams<T, S, P>,
   ): StyleCreatorWithParams<T, S, P>;
 }
 
 export interface CreateUseStyle<T extends Themes> {
-  <S extends NamedStyles<S> | NamedStyles<any>>(
-    styleCreator: StyleCreator<T, S>,
-  ): () => StyleObj<S>;
-
-  <S extends NamedStyles<S> | NamedStyles<any>, P = any>(
+  <S extends NamedStyles<S> | NamedStyles<any>, P = undefined>(
     styleCreator: StyleCreatorWithParams<T, S, P>,
-  ): (params: P) => StyleObj<S>;
+  ): P extends undefined ? () => StyleObj<S> : (params: P) => StyleObj<S>;
 }
