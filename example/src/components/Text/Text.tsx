@@ -10,11 +10,7 @@ type Props = TextProps & {
 };
 
 const Text = ({ type, ...textProps }: Props) => {
-  const styles = useStyle();
-
-  if (type) {
-    //
-  }
+  const styles = useStyle({ type });
 
   return (
     <RNText {...textProps} style={[styles.styleByType, textProps.style]}>

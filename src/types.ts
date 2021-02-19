@@ -26,34 +26,17 @@ export type ThemeContextProps<T extends Themes> = {
   themes: T;
 };
 
-// export type StyleCreator<
-//   T extends Themes,
-//   S extends NamedStyles<S> | NamedStyles<any>
-// > = (themes: ExtractThemes<T>) => StyleObj<S>;
+export type StyleCreator<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>
+> = (themes: ExtractThemes<T>) => StyleObj<S>;
 
-// export type StyleCreatorWithParams<
-//   T extends Themes,
-//   S extends NamedStyles<S> | NamedStyles<any>,
-//   P = any
-// > = (themes: ExtractThemes<T>, params: P) => StyleObj<S>;
+export type StyleCreatorWithParams<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P = any
+> = (themes: ExtractThemes<T>, params: P) => StyleObj<S>;
 
-export interface StyleCreator<T extends Themes> {
-  <S extends NamedStyles<S> | NamedStyles<any>>(
-    themes: ExtractThemes<T>,
-  ): StyleObj<S>;
-  <S extends NamedStyles<S> | NamedStyles<any>, P>(
-    themes: ExtractThemes<T>,
-    params: P,
-  ): StyleObj<S>;
-}
-
-/*
-
-useStyle<S extends NamedStyles<S> | NamedStyles<any>, P>(
-  styleCreator: StyleCreator<any, S, P>,
-  params: P,
-): StyleObj<S>
-*/
 export interface UseStyle<T extends Themes> {
   <S extends NamedStyles<S> | NamedStyles<any>>(
     styleCreator: StyleCreator<T, S>,
@@ -66,16 +49,13 @@ export interface UseStyle<T extends Themes> {
 }
 
 export interface CreateStyle<T extends Themes> {
-  <S extends NamedStyles<S> | NamedStyles<any>, R extends StyleCreator<T, S>>(
-    styleCreator: R,
-  ): R;
+  <S extends NamedStyles<S> | NamedStyles<any>>(
+    styleCreator: StyleCreator<T, S>,
+  ): StyleCreator<T, S>;
 
-  <
-    S extends NamedStyles<S> | NamedStyles<any>,
-    R extends StyleCreatorWithParams<T, S, any>
-  >(
-    styleCreator: R,
-  ): R;
+  <S extends NamedStyles<S> | NamedStyles<any>, P>(
+    styleCreator: StyleCreatorWithParams<T, S, P>,
+  ): StyleCreatorWithParams<T, S, P>;
 }
 
 export interface CreateUseStyle<T extends Themes> {
