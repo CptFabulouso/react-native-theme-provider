@@ -10,7 +10,7 @@ type Props = TextProps & {
 };
 
 const Text = ({ type, ...textProps }: Props) => {
-  const styles = useStyle({ type });
+  const styles = useStyle();
 
   if (type) {
     //
