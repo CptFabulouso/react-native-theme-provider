@@ -1,4 +1,4 @@
-import { CreateStyle, CreateUseStyle, Themes } from './types';
+import { NamedStyles, StyleCreator, StyleObj, Themes } from './types';
 import { useStyle, useTheme, useThemeDispatch } from './hooks';
 
 export function createUseTheme<T extends Themes>() {
@@ -13,22 +13,67 @@ export function createUseThemeDispatch<T extends Themes>() {
   };
 }
 
-export const createStyle: CreateStyle<any> = (styleCreator) => styleCreator;
+export function createStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>
+>(fn: StyleCreator<T, S, undefined>): StyleCreator<T, S, undefined>;
 
-export const createUseStyle: CreateUseStyle<any> = (styleCreator) => {
-  return (params) => useStyle(styleCreator, params);
-};
+export function createStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(fn: StyleCreator<T, S, P>): StyleCreator<T, S, P>;
 
-export function createStyleCreator<T extends Themes>(): CreateStyle<T> {
-  const createStyleThemed: CreateStyle<T> = (styleCreator) => styleCreator;
-  return createStyleThemed;
+export function createStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(fn: StyleCreator<T, S, P>): StyleCreator<T, S, P> {
+  return fn;
 }
 
-export function createUseStyleCreator<T extends Themes>(): CreateUseStyle<T> {
-  return (styleCreator) => (params) => useStyle(styleCreator, params);
+export function createUseStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>
+>(styleCreator: StyleCreator<T, S, undefined>): () => StyleObj<S>;
+
+export function createUseStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(styleCreator: StyleCreator<T, S, P>): (params: P) => StyleObj<S>;
+
+export function createUseStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(styleCreator: StyleCreator<T, S, P>) {
+  return (params: P) => useStyle(styleCreator, params);
+}
+
+export function createStyleCreator<T extends Themes>() {
+  return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
+    styleCreator: StyleCreator<T, S, P>,
+  ) {
+    return createStyle<T, S, P>(styleCreator);
+  };
+}
+
+export function createUseStyleCreator<T extends Themes>() {
+  return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
+    styleCreator: StyleCreator<T, S, P>,
+  ) {
+    return createUseStyle<T, S, P>(styleCreator);
+  };
 }
 
 // testy
+
+type ThemesT = {
+  light: {
+    blue: 'blue';
+  };
+};
 
 const styleCreator = createStyle((t) => ({
   container: {
@@ -42,6 +87,40 @@ const styleCreatorParams = createStyle((t, { val }: { val: string }) => ({
     borderBottomColor: val,
   },
 }));
+
+const themedCreateStyle = createStyleCreator<ThemesT>();
+
+const themedStyleCreator = themedCreateStyle((t) => ({
+  container: {
+    backgroundColor: t.blue,
+  },
+}));
+
+const themedStyleCreatorParams = themedCreateStyle(
+  (t, { val }: { val: string }) => ({
+    container: {
+      backgroundColor: t.blue,
+      borderBottomColor: val,
+    },
+  }),
+);
+
+const themedCreateUseStyle = createUseStyleCreator<ThemesT>();
+
+const themedUseStyle = themedCreateUseStyle((t) => ({
+  container: {
+    backgroundColor: t.blue,
+  },
+}));
+
+const themedUseStyleParams = themedCreateUseStyle(
+  (t, { val }: { val: string }) => ({
+    container: {
+      backgroundColor: t.blue,
+      borderBottomColor: val,
+    },
+  }),
+);
 
 const useStyleTest = createUseStyle((t) => ({
   container: {
@@ -59,13 +138,21 @@ const useStyleTestParams = createUseStyle((t, { val }: { val: string }) => ({
 export const Buu = () => {
   const styles = useStyle(styleCreator);
   const stylesParams = useStyle(styleCreatorParams);
+  const themedStyles = useStyle(themedStyleCreator);
+  const themedStylesParams = useStyle(themedStyleCreatorParams);
   const stylesUse = useStyleTest();
   const stylesUseParams = useStyleTestParams();
+  const themedStylesUse = themedUseStyle();
+  const themedStylesUseParams = themedUseStyleParams();
 
   console.log({
-    styles,
-    stylesParams,
-    stylesUse,
-    stylesUseParams,
+    styles: styles.container,
+    stylesParams: stylesParams.container,
+    stylesUse: stylesUse.container,
+    stylesUseParams: stylesUseParams.container,
+    themedStyles: themedStyles.container,
+    themedStylesParams: themedStylesParams.container,
+    themedStylesUse: themedStylesUse.container,
+    themedStylesUseParams: themedStylesUseParams.container,
   });
 };

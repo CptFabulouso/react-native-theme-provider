@@ -1,15 +1,32 @@
 import * as React from 'react';
 
-import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 import {
+  ExtractThemes,
+  NamedStyles,
+  StyleCreator,
+  StyleObj,
   ThemeContextValue,
   ThemeDispatchContextValue,
   Themes,
-  UseStyle,
 } from './types';
+import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 
-export const useStyle: UseStyle<any> = (styleCreator, params) => {
-  const { selectedTheme, themes } = useTheme();
+export function useStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>
+>(styleCreator: StyleCreator<T, S, undefined>): StyleObj<S>;
+export function useStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(styleCreator: StyleCreator<T, S, P>, params: P): StyleObj<S>;
+
+export function useStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>, params?: P) {
+  const { selectedTheme, themes } = useTheme<T>();
 
   const styles = React.useMemo(() => {
     const theme = themes[selectedTheme];
@@ -17,7 +34,7 @@ export const useStyle: UseStyle<any> = (styleCreator, params) => {
   }, [styleCreator, selectedTheme, themes, params]);
 
   return styles;
-};
+}
 
 // export function useStyle<S extends NamedStyles<S> | NamedStyles<any>, P>(
 //   styleCreator: any,

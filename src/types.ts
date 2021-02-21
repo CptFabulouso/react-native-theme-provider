@@ -28,43 +28,109 @@ export type ThemeContextProps<T extends Themes> = {
 
 export type StyleCreator<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>
-> = (themes: ExtractThemes<T>) => StyleObj<S>;
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+> = (theme: ExtractThemes<T>, params: P) => StyleObj<S>;
 
-export type StyleCreatorWithParams<
+function getThemes<T extends Themes>(theme: T): T {
+  return theme;
+}
+
+function useStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>
+>(styleCreator: StyleCreator<T, S, undefined>): StyleObj<S>;
+function useStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P = undefined
-> = (themes: ExtractThemes<T>, params: P) => StyleObj<S>;
+  P
+>(styleCreator: StyleCreator<T, S, P>, params: P): StyleObj<S>;
 
-// export interface UseStyle<T extends Themes> {
-//   <S extends NamedStyles<S> | NamedStyles<any>>(
-//     styleCreator: StyleCreator<T, S>,
-//   ): StyleObj<S>;
-
-//   <S extends NamedStyles<S> | NamedStyles<any>, P = undefined>(
-//     styleCreator: StyleCreatorWithParams<T, S, P>,
-//     params: P,
-//   ): StyleObj<S>;
-// }
-
-export type UseStyle<T extends Themes, P = undefined> = P extends undefined
-  ? <S extends NamedStyles<S> | NamedStyles<any>>(
-      styleCreator: StyleCreatorWithParams<T, S, P>,
-    ) => StyleObj<S>
-  : <S extends NamedStyles<S> | NamedStyles<any>>(
-      styleCreator: StyleCreatorWithParams<T, S, P>,
-      params: P,
-    ) => StyleObj<S>;
-
-export interface CreateStyle<T extends Themes> {
-  <S extends NamedStyles<S> | NamedStyles<any>, P = undefined>(
-    styleCreator: StyleCreatorWithParams<T, S, P>,
-  ): StyleCreatorWithParams<T, S, P>;
+function useStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>, params?: P) {
+  const themes = getThemes({ light: { var: 'bu' } });
+  // @ts-ignore
+  return styleCreator(themes, params);
 }
 
-export interface CreateUseStyle<T extends Themes> {
-  <S extends NamedStyles<S> | NamedStyles<any>, P = undefined>(
-    styleCreator: StyleCreatorWithParams<T, S, P>,
-  ): P extends undefined ? () => StyleObj<S> : (params: P) => StyleObj<S>;
+function createStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>
+>(fn: StyleCreator<T, S, undefined>): StyleCreator<T, S, undefined>;
+
+function createStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(fn: StyleCreator<T, S, P>): StyleCreator<T, S, P>;
+
+function createStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(
+  fn: (themes: ExtractThemes<T>, params?: P) => StyleObj<S>,
+): (themes: ExtractThemes<T>, params?: P) => StyleObj<S> {
+  return fn;
 }
+
+function createStyleCreator<T extends Themes>() {
+  return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
+    fn: StyleCreator<T, S, P>,
+  ) {
+    return createStyle<T, S, P>(fn);
+  };
+}
+
+const styleCreator = createStyle((t) => ({
+  container: {
+    backgroundColor: t.blue,
+  },
+}));
+
+const styleCreatorParams = createStyle((t, { val }: { val: string }) => ({
+  container: {
+    backgroundColor: t.blue,
+    borderBottomColor: val,
+  },
+}));
+
+type ThemesType = {
+  light: {
+    blue: 'blue';
+  };
+};
+
+const themedCreateStyle = createStyleCreator<ThemesType>();
+
+const themedStyleCreator = themedCreateStyle((t) => ({
+  container: {
+    backgroundColor: t.blue,
+  },
+}));
+
+const themedStyleCreatorParams = themedCreateStyle(
+  (t, params: { val: string }) => ({
+    container: {
+      backgroundColor: t.blue,
+      borderBottomColor: params.val,
+    },
+  }),
+);
+
+export const Foo = () => {
+  const styles = useStyle(styleCreator);
+  const stylesParams = useStyle(styleCreatorParams);
+  const stylesThemed = useStyle(themedStyleCreator);
+  const stylesParamsThemed = useStyle(themedStyleCreatorParams);
+
+  console.log({
+    styles: styles.container,
+    stylesParams: stylesParams.container,
+    stylesThemed: stylesThemed.container,
+    stylesParamsThemed: stylesParamsThemed.container,
+  });
+};
