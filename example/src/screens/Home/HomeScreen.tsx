@@ -6,7 +6,7 @@ import { useTheme, useThemeDispatch } from '@themes';
 import useStyle from './styles';
 
 const HomeScreen = () => {
-  const styles = useStyle();
+  const styles = useStyle(null);
   const { selectedTheme } = useTheme();
   const { setTheme } = useThemeDispatch();
   const [val, updateVal] = useState(1);

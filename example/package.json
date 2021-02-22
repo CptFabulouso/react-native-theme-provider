@@ -8,7 +8,8 @@
     "start": "react-native start",
     "test": "jest",
     "format": "prettier --write src/**/*.{ts,tsx}",
-    "lint": "eslint src/**/*.{ts,tsx} --fix"
+    "lint": "eslint src/**/*.{ts,tsx} --fix",
+    "tsc": "tsc --noEmit"
   },
   "dependencies": {
     "react": "16.13.1",

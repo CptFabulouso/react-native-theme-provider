@@ -8,9 +8,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write src/**/*.{ts,tsx}",
     "lint": "eslint src/**/*.{ts,tsx} --fix",
-    "compile": "rm -rf lib && tsc -p .",
+    "compile": "rm -rf lib && tsc -p ./tsconfig.prod.json",
     "prepare": "yarn compile",
-    "publish": "npm publish --access public"
+    "publish": "npm publish --access public",
+    "tsc": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -43,7 +44,7 @@
     "metro-react-native-babel-preset": "^0.59.0",
     "prettier": "^2.1.2",
     "react-test-renderer": "16.13.1",
-    "typescript": "^3.8.3"
+    "typescript": "^4.1.5"
   },
   "peerDependencies": {
     "react": "*",
