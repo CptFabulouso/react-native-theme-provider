@@ -17,10 +17,10 @@
     "target": "ESNext"
   },
   "include": [
-    "src"
+    "src",
+    "**/__tests__/*"
   ],
   "exclude": [
     "node_modules",
-    "**/__tests__/*"
   ]
 }

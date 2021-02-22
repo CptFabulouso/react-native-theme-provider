@@ -1,6 +1,6 @@
 import {
-  createStyleCreator,
-  createUseStyleCreator,
+  createThemedStyleCreator,
+  createThemedUseStyleCreator,
   createUseTheme,
   createUseThemeDispatch,
   useStyle,
@@ -18,7 +18,7 @@ export const themes = {
 
 export type Themes = typeof themes;
 
-export const createUseStyle = createUseStyleCreator<Themes>();
-export const createStyle = createStyleCreator<Themes>();
+export const createUseStyle = createThemedUseStyleCreator<Themes>();
+export const createStyle = createThemedStyleCreator<Themes>();
 export const useTheme = createUseTheme<Themes>();
 export const useThemeDispatch = createUseThemeDispatch<Themes>();

@@ -21,4 +21,4 @@ export declare type ThemeContextProps<T extends Themes> = {
     initialTheme: ExtractThemeNames<T>;
     themes: T;
 };
-export declare type StyleCreator<T extends Themes, S extends NamedStyles<S> | NamedStyles<any>> = (themes: ExtractThemes<T>) => StyleObj<S>;
+export declare type StyleCreator<T extends Themes, S extends NamedStyles<S> | NamedStyles<any>, P> = (theme: ExtractThemes<T>, params: P) => StyleObj<S>;

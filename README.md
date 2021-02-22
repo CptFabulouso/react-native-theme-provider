@@ -7,6 +7,8 @@
     - [Wrap app with ThemeProvider with created themes](#wrap-app-with-themeprovider-with-created-themes)
     - [Access theme from any component](#access-theme-from-any-component)
     - [Lastly to change or access theme](#lastly-to-change-or-access-theme)
+  - [Passing params to style creator](#passing-params-to-style-creator)
+    - [Passing params examples](#passing-params-examples)
   - [Typescript usage](#typescript-usage)
   - [Recommendations](#recommendations)
   - [Example](#example)
@@ -147,6 +149,106 @@ export default SomeComponent = () => {
 }
 ```
 
+## Passing params to style creator
+
+You can pass params to `useStyle` and similar functions, which will be accessible in `createStyle` and similar.
+
+When using typescript, you will be alerted if you specify params in `createStyle`, but do not pass it into `useStyle`. Right now there is small culprit with using `createThemedUseStyleCreator`, where you have to pass `null` into the resulting `useStyle` if you don't specify params, see bellow. With other functions this is not necessary.
+
+### Passing params examples
+
+using `createStyle` and `useStyle` combination
+
+```js
+// InnerComponent.js
+
+import React from 'react';
+import { View } from 'react-native';
+import { createStyle, useStyle } from '@pavelgric/react-native-theme-provider';
+
+const styleCreator = createStyle((t, { borderColor }: {borderColor: string}) => ({
+  container: {
+    backgroundColor: t.colors.primary
+  },
+}));
+
+export default InnerComponent = () => {
+  const styles = useStyle(styleCreator, { borderColor: 'blue' });
+
+  return (
+    <View style={styles.container} />
+  )
+}
+```
+
+using `createUseStyle`
+
+```js
+// InnerComponent.js
+
+import React from 'react';
+import { View } from 'react-native';
+import { createUseStyle } from '@pavelgric/react-native-theme-provider';
+
+const useStyle = createUseStyle((t, { borderColor }: {borderColor: string}) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+    borderColor,
+  },
+}));
+
+export default InnerComponent = () => {
+  const styles = useStyle({borderColor: 'blue'});
+
+  return (
+    <View style={styles.container} />
+  )
+}
+```
+
+using themed `createThemedUseStyleCreator`, see the culprit with passing `null`
+
+```js
+// InnerComponent.js
+
+import React from 'react';
+import { View } from 'react-native';
+import { createThemedUseStyleCreator } from '@pavelgric/react-native-theme-provider';
+
+type Themes = {
+  light: {
+    colors:{
+      primary: 'blue'
+    }
+  }
+}
+
+const createUseStyle = createThemedUseStyleCreator<Themes>()
+
+const useStyleWithoutParams = createUseStyle((t) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+    borderColor,
+  },
+}));
+const useStyleWithParams = createUseStyle((t, { borderColor }: {borderColor: string}) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+    borderColor,
+  },
+}));
+
+export default InnerComponent = () => {
+  // you have to pass null, otherwise typescript shows error
+  const styles = useStyleWithoutParams(null);
+  const styles = useStyleWithParams({borderColor: 'blue'});
+
+  return (
+    <View style={styles.container} />
+  )
+}
+```
+
 ## Typescript usage
 
 The library provides few functions to help passing down the Theme type
@@ -156,8 +258,8 @@ Define your themes and use creator functions
 ```js
 // themes.js
 import {
-  createStyleCreator,
-  createUseStyleCreator,
+  createThemedStyleCreator,
+  createThemedUseStyleCreator,
   createUseTheme,
   createUseThemeDispatch,
   useStyle,
@@ -184,8 +286,8 @@ export const themes = {
 export type Themes = typeof themes;
 // useStyle does not depend on Theme, this is just to make it also accessible from here
 export { useStyle };
-export const createStyle = createStyleCreator<Themes>();
-export const createUseStyle = createUseStyleCreator<Themes>();
+export const createStyle = createThemedStyleCreator<Themes>();
+export const createUseStyle = createThemedUseStyleCreator<Themes>();
 export const useTheme = createUseTheme<Themes>();
 export const useThemeDispatch = createUseThemeDispatch<Themes>();
 ```
