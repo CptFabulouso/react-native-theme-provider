@@ -59,6 +59,13 @@ export function createThemedStyleCreator<T extends Themes>() {
   };
 }
 
+export function createThemedUseStyleCreator<T extends Themes>(): <
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P = undefined
+>(
+  styleCreator: StyleCreator<T, S, P>,
+) => P extends undefined ? () => StyleObj<S> : (params: P) => StyleObj<S>;
+
 export function createThemedUseStyleCreator<T extends Themes>() {
   return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
     styleCreator: StyleCreator<T, S, P>,

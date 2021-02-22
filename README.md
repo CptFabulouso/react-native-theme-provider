@@ -153,7 +153,7 @@ export default SomeComponent = () => {
 
 You can pass params to `useStyle` and similar functions, which will be accessible in `createStyle` and similar.
 
-When using typescript, you will be alerted if you specify params in `createStyle`, but do not pass it into `useStyle`. Right now there is small culprit with using `createThemedUseStyleCreator`, where you have to pass `null` into the resulting `useStyle` if you don't specify params, see bellow. With other functions this is not necessary.
+When using typescript, you will be alerted if you specify params in `createStyle`, but do not pass it into `useStyle`
 
 ### Passing params examples
 
@@ -198,7 +198,7 @@ const useStyle = createUseStyle((t, { borderColor }: {borderColor: string}) => (
 }));
 
 export default InnerComponent = () => {
-  const styles = useStyle({borderColor: 'blue'});
+  const styles = useStyle({ borderColor: 'blue' });
 
   return (
     <View style={styles.container} />
@@ -206,7 +206,7 @@ export default InnerComponent = () => {
 }
 ```
 
-using themed `createThemedUseStyleCreator`, see the culprit with passing `null`
+using themed `createThemedUseStyleCreator`
 
 ```js
 // InnerComponent.js
@@ -225,13 +225,7 @@ type Themes = {
 
 const createUseStyle = createThemedUseStyleCreator<Themes>()
 
-const useStyleWithoutParams = createUseStyle((t) => ({
-  container: {
-    backgroundColor: t.colors.primary,
-    borderColor,
-  },
-}));
-const useStyleWithParams = createUseStyle((t, { borderColor }: {borderColor: string}) => ({
+const useStyle = createUseStyle((t, { borderColor }: {borderColor: string}) => ({
   container: {
     backgroundColor: t.colors.primary,
     borderColor,
@@ -239,9 +233,7 @@ const useStyleWithParams = createUseStyle((t, { borderColor }: {borderColor: str
 }));
 
 export default InnerComponent = () => {
-  // you have to pass null, otherwise typescript shows error
-  const styles = useStyleWithoutParams(null);
-  const styles = useStyleWithParams({borderColor: 'blue'});
+  const styles = useStyle({ borderColor: 'blue' });
 
   return (
     <View style={styles.container} />

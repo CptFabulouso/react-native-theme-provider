@@ -14,7 +14,7 @@ type Props = TouchableOpacityProps & {
 };
 
 const Button = ({ label, labelStyle, ...touchableProps }: Props) => {
-  const styles = useStyle(null);
+  const styles = useStyle();
 
   return (
     <TouchableOpacity
