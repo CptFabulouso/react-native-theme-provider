@@ -9,6 +9,7 @@ import {
   ThemeDispatchContextValue,
   Themes,
 } from './types';
+import { StylesCache } from './stylesCache';
 import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 
 export function useStyle<
@@ -19,21 +20,61 @@ export function useStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
   P
->(styleCreator: StyleCreator<T, S, P>, params: P): StyleObj<S>;
+>(
+  styleCreator: StyleCreator<T, S, P>,
+  params: P,
+  key?: string | number,
+): StyleObj<S>;
 
 export function useStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
   P
->(styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>, params?: P) {
-  const { selectedTheme, themes } = useTheme<T>();
+>(
+  styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
+  params?: P,
+  key?: string | number,
+) {
+  const { t } = useTheme<T>();
 
   const styles = React.useMemo(() => {
-    const theme = themes[selectedTheme];
-    return styleCreator(theme, params);
-  }, [styleCreator, selectedTheme, themes, params]);
+    if (!params && key) {
+      const cachedStyle = StylesCache.getStyle(key);
+      if (cachedStyle) {
+        return cachedStyle;
+      }
+      const style = styleCreator(t, params);
+      StylesCache.addStyle(key, style);
+      return style;
+    }
+    return styleCreator(t, params);
+  }, [styleCreator, t, params, key]);
 
   return styles;
+}
+
+export function useCachedStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>
+>(
+  styleCreator: StyleCreator<T, S, undefined>,
+  key: string | number,
+): StyleObj<S>;
+export function useCachedStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(styleCreator: StyleCreator<T, S, P>, key: string | number): StyleObj<S>;
+
+export function useCachedStyle<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P
+>(
+  styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
+  key: string | number,
+) {
+  return useStyle(styleCreator, undefined, key);
 }
 
 export function useTheme<T extends Themes>(): ThemeContextValue<T> {

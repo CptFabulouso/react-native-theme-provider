@@ -7,6 +7,7 @@ import {
   ThemeDispatchContextValue,
   Themes,
 } from './types';
+import { StylesCache } from './stylesCache';
 
 export const ThemeContext = React.createContext<ThemeContextValue<any> | null>(
   null,
@@ -26,6 +27,7 @@ export function ThemeProvider<T extends Themes>({
   );
 
   const changeTheme = (t: any) => {
+    StylesCache.resetAll();
     setThemeName(t);
   };
 

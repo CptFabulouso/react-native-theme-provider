@@ -5,7 +5,7 @@ import {
   // createThemedUseStyleCreator,
   createUseStyle,
 } from '../creators';
-import { useStyle } from '../hooks';
+import { useCachedStyle, useStyle } from '../hooks';
 
 type Themes = {
   light: {
@@ -118,9 +118,11 @@ const checkStyle = (
 
 export const Foo = () => {
   const styles = useStyle(styleCreator);
+  const cachedStyles = useCachedStyle(styleCreator, 'Foo1');
   // @ts-expect-error
   const stylesParams = useStyle(styleCreatorParams);
   const themedStyles = useStyle(themedStyleCreator);
+  const cachedThemedStyles = useCachedStyle(themedStyleCreator, 'Foo2');
   // @ts-expect-error
   const themedStylesParams = useStyle(themedStyleCreatorParams);
   const stylesUse = useStyleTest();
@@ -132,8 +134,10 @@ export const Foo = () => {
 
   checkStyle([
     styles,
+    cachedStyles,
     stylesParams,
     themedStyles,
+    cachedThemedStyles,
     themedStylesParams,
     stylesUse,
     stylesUseParams,

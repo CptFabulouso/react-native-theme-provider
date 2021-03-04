@@ -1,8 +1,5 @@
-import { Typography, createUseStyle } from '@themes';
+import { createUseStyle } from '@themes';
 
-export default createUseStyle(
-  (t, params: { type: keyof Typography | undefined }) => ({
-    ...t.typography,
-    styleByType: params.type ? t.typography[params.type] : {},
-  }),
-);
+export default createUseStyle((t) => ({
+  ...t.typography,
+}));

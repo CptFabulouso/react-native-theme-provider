@@ -1,5 +1,6 @@
+import { KeyGenerator } from './stylesCache';
 import { NamedStyles, StyleCreator, StyleObj, Themes } from './types';
-import { useStyle, useTheme, useThemeDispatch } from './hooks';
+import { useCachedStyle, useStyle, useTheme, useThemeDispatch } from './hooks';
 
 export function createUseTheme<T extends Themes>() {
   return function () {
@@ -48,7 +49,13 @@ export function createUseStyle<
   S extends NamedStyles<S> | NamedStyles<any>,
   P
 >(styleCreator: StyleCreator<T, S, P>) {
-  return (params: P) => useStyle<T, S, P>(styleCreator, params);
+  const key = KeyGenerator.getNextKey();
+  return (params: P) => {
+    if (params) {
+      return useStyle<T, S, P>(styleCreator, params);
+    }
+    return useCachedStyle<T, S, P>(styleCreator, key);
+  };
 }
 
 export function createThemedStyleCreator<T extends Themes>() {

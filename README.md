@@ -10,6 +10,16 @@
   - [Passing params to style creator](#passing-params-to-style-creator)
     - [Passing params examples](#passing-params-examples)
   - [Typescript usage](#typescript-usage)
+  - [Exported functions](#exported-functions)
+    - [`createStyle`](#createstyle)
+    - [`useStyle`](#usestyle)
+    - [`useCachedStyle`](#usecachedstyle)
+    - [`createUseStyle`](#createusestyle)
+    - [`useTheme`](#usetheme)
+    - [`useThemeDispatch`](#usethemedispatch)
+    - [`createThemedStyleCreator`](#createthemedstylecreator)
+    - [`createUseTheme`](#createusetheme)
+    - [`createUseThemeDispatch`](#createusethemedispatch)
   - [Recommendations](#recommendations)
   - [Example](#example)
 
@@ -308,6 +318,154 @@ const styleCreator = createStyle((t) => ({
 }));
 ```
 
+## Exported functions
+
+### `createStyle`
+
+This function is to create style object, similar to `StyleSheet.create`, except you receive the theme object and optional params. The function returns styleCreator, which is to be passed to `useStyle`.
+
+```js
+import { createStyle } from '@pavelgric/react-native-theme-provider'; 
+
+const styleCreator = createStyle((t, passedParams) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+    opacity: passedParams.disabled? 0.5 : 1,
+  },
+}));
+```
+
+### `useStyle`
+
+This function accepts styleCreator created with `createStyle`, and returns style object returned by styleCreator.
+
+You can also pass second argument, which can be then accessed in styleCreator.
+
+The returned style is memoized and doesn't change (and compute) unless the theme is changed.
+Note that if you pass params as object and don't want to calculate style on each render, you need to memoize it.
+
+```js
+import { useMemo } from 'react';
+import { useStyle } from '@pavelgric/react-native-theme-provider';
+
+import styleCreator from './styles'
+
+export default FooComponent = ({disabled}) => {
+  // memoize params, to prevent unnecessary renders
+  const styleParams = useMemo(() => ({ disabled }), [disabled])
+  const styles = useStyle(styleCreator, styleParams);
+
+  return <YourComponents style={styles.container} />
+}
+```
+
+### `useCachedStyle`
+
+Similar to `useStyle`, but the object created in styleCreator is cached, so we don't create new instance for every component.
+
+Image you have `ThemedText` component used all over the place, with `useStyle` each of the `ThemedText` component has its own style object.
+With `useCachedStyle` only one style object is created and shared by all `ThemedText` components.
+Beware that because all components share one style object this function doesn't currently allow passing params. That may be allowed in future
+
+Technically this function just wraps `useStyle` and you can achieve the same by using `useStyle(styleCreator, undefined, 'UniqueKey')`,
+the `useCachedStyle` just avoids that weird syntax. Still if you would try passing params instead of `undefined`, the cache won't be used, there is no bypassing.
+
+```js
+import { Text } from 'react-native';
+import { useCachedStyle } from '@pavelgric/react-native-theme-provider';
+
+import styleCreator from './styles'
+
+export default ThemedText = ({disabled}) => {
+  const styles = useCachedStyle(styleCreator, 'ThemedText');
+
+  // useCachedStyle doesn't allow passing params, handle conditional styles in component
+  return <Text style={[styles.container, { opacity: disabled? 0.5 : 1 }]} />
+}
+```
+
+### `createUseStyle`
+
+This combines `createStyle` and `useStyle` into one function and returns `useStyle` function for direct use.
+
+If you don't pass params, style is automatically cached with `useCachedStyle`, otherwise `useStyle` is used.
+
+```js
+import { createUseStyle } from '@pavelgric/react-native-theme-provider'; 
+
+const useStyle = createUseStyle((t, passedParams) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+    opacity: passedParams.disabled? 0.5 : 1,
+  },
+}));
+
+export default FooComponent = ({disabled}) => {
+  // memoize params, to prevent unnecessary renders
+  const styleParams = useMemo(() => ({ disabled }), [disabled])
+  const styles = useStyle(styleParams);
+
+  return <YourComponents style={styles.container} />
+}
+```
+
+### `useTheme`
+
+Access theme in any Component.
+
+```js
+import { useTheme } from '@pavelgric/react-native-theme-provider';
+
+export default SomeComponent = () => {
+  const { 
+    selectedTheme, // the key of selected theme
+    themes, // the whole themes object
+    t // current theme object
+  } = useTheme();
+  const { setTheme } = useThemeDispatch();
+
+  // to access current theme object, or use t
+  const themeObj = themes[selectedTheme];
+
+  return <Component />
+}
+```
+
+### `useThemeDispatch`
+
+Change theme
+
+```js
+import { useThemeDispatch } from '@pavelgric/react-native-theme-provider';
+
+export default SomeComponent = () => {
+  const { setTheme } = useThemeDispatch();
+
+  return(
+    <View>
+      <TouchableOpacity onPress={() => {setTheme('blue')}}>
+        <Text>Set blue theme</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => {setTheme('red')}}>
+        <Text>Set red theme</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+```
+
+### `createThemedStyleCreator`
+
+see [Typescript usage](#typescript-usage). Returned function does style caching same way as `createUseStyle`
+
+### `createUseTheme`
+
+see [Typescript usage](#typescript-usage)
+
+### `createUseThemeDispatch`
+
+see [Typescript usage](#typescript-usage)
+
 ## Recommendations
 
 Use creator function to ensure all theme objects have same shape, otherwise keys that are not present in all theme objects will be excluded by Typescript.
@@ -372,6 +530,6 @@ export const themes = createThemes({
 
 See example for semi-complete solution
 
-to run example, you need to install dependencies on package level, so navigate to this package in terminal and run
+to run example, you need to install dependencies both on package and example level, so navigate to this package in terminal and run
 
 `yarn && cd example && yarn && cd ios && pod install`;
