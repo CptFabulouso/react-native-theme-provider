@@ -2,7 +2,7 @@
   "name": "@pavelgric/react-native-theme-provider",
   "version": "0.0.4",
   "description": "Simple theme provider for React Native",
-  "main": "src/index.ts",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

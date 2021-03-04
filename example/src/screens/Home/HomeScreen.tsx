@@ -1,7 +1,7 @@
 import { ScrollView } from 'react-native';
 import React, { useState } from 'react';
 
-import { Button, Text } from '@components';
+import { Button, ClassText, Text } from '@components';
 import { useTheme, useThemeDispatch } from '@themes';
 import useStyle from './styles';
 
@@ -30,11 +30,11 @@ const HomeScreen = () => {
       <Text type="h6">h6</Text>
       <Text type="subtitle1">subtitle1</Text>
       <Text type="subtitle2">subtitle2</Text>
-      <Text type="body1">body1</Text>
-      <Text type="body2">body2</Text>
-      <Text type="button">button</Text>
-      <Text type="caption">caption</Text>
-      <Text type="overline">overline</Text>
+      <ClassText type="body1">body1</ClassText>
+      <ClassText type="body2">body2</ClassText>
+      <ClassText type="button">button</ClassText>
+      <ClassText type="caption">caption</ClassText>
+      <ClassText type="overline">overline</ClassText>
       <Button label="change theme" onPress={changeTheme} />
       <Button label="update screen" onPress={updateScreen} />
       <Text type="h5">{`update cycle: ${val}`}</Text>

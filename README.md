@@ -20,6 +20,9 @@
     - [`createThemedStyleCreator`](#createthemedstylecreator)
     - [`createUseTheme`](#createusetheme)
     - [`createUseThemeDispatch`](#createusethemedispatch)
+  - [Wrappers](#wrappers)
+    - [`withUseStyle(Component, useStyleFunc, [mapPropsToParams])`](#withusestylecomponent-usestylefunc-mappropstoparams)
+    - [`withCreateStyle(Component, createStyleFunc, [mapPropsToParams, [memoizeKey]])`](#withcreatestylecomponent-createstylefunc-mappropstoparams-memoizekey)
   - [Recommendations](#recommendations)
   - [Example](#example)
 
@@ -101,7 +104,7 @@ export default InnerComponent = () => {
 ```
 
 Alternatively you can use `createUseStyle` helper function to remove few lines of code
- 
+
 ```js
 // InnerComponent.js
 
@@ -465,6 +468,84 @@ see [Typescript usage](#typescript-usage)
 ### `createUseThemeDispatch`
 
 see [Typescript usage](#typescript-usage)
+
+## Wrappers
+
+### `withUseStyle(Component, useStyleFunc, [mapPropsToParams])`
+
+Passes styles as prop to class component created from `useStyle`. Style object is memoized if you do not pass params.
+
+```js
+import { useStyle, withUseStyle } from '@pavelgric/react-native-theme-provider';
+
+const useStyle = createUseStyle((t, passedParams) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+    opacity: passedParams.disabled? 0.5 : 1,
+  },
+}));
+
+type ClassCompProps = {
+  styles: ReturnType<typeof useStyle>;
+  disabled: boolean;
+};
+
+export class ClassComp extends Component<ClassCompProps> {
+  render() {
+    const { styles } = this.props;
+    return <View style={styles.container} />;
+  }
+}
+
+const ClassCompWithStyle = withUseStyle(
+  ClassComp,
+  useStyle,
+  ({disabled}) => ({disabled})
+);
+
+```
+
+### `withCreateStyle(Component, createStyleFunc, [mapPropsToParams, [memoizeKey]])`
+
+Passes styles as prop to class component created from createStyle using `styleCreator`.
+To memoize the resulting style object, you must pass undefined in `mapPropsToParams` and then some unique key.
+
+```js
+import { styleCreator, withCreateStyle } from '@pavelgric/react-native-theme-provider';
+
+const styleCreator = createStyle((t, passedParams) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+    opacity: passedParams.disabled? 0.5 : 1,
+  },
+}));
+
+type ClassCompProps = {
+  styles: ReturnType<typeof styleCreator>;
+  disabled: boolean;
+};
+
+export class ClassComp extends Component<ClassCompProps> {
+  render() {
+    const { styles } = this.props;
+    return <View style={styles.container} />;
+  }
+}
+
+const ClassCompWithStyle = withCreateStyle(
+  ClassComp,
+  styleCreator,
+  ({disabled}) => ({disabled})
+);
+
+const ClassCompWithStyleMemoized = withCreateStyle(
+  ClassComp,
+  styleCreator,
+  undefined,
+  'UniqueKey'
+);
+
+```
 
 ## Recommendations
 
