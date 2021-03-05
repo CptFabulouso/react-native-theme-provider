@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import * as React from 'react';
 import { NamedStyles, StyleCreator, StyleObj } from '../types';
 import {
   createStyle,
@@ -156,7 +156,9 @@ type ClassCompWithUseStyleProps = {
   styles: ReturnType<typeof useStyleTest>;
   val: string;
 };
-export class ClassCompUseStyle extends Component<ClassCompWithUseStyleProps> {
+export class ClassCompUseStyle extends React.Component<
+  ClassCompWithUseStyleProps
+> {
   render() {
     const { styles } = this.props;
     checkStyle([styles]);
@@ -188,7 +190,7 @@ type ClassCompWithCreateStyleProps = {
   val: string;
 };
 
-export class ClassCompCreateStyle extends Component<
+export class ClassCompCreateStyle extends React.Component<
   ClassCompWithCreateStyleProps
 > {
   render() {
