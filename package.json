@@ -9,7 +9,7 @@
     "format": "prettier --write src/**/*.{ts,tsx}",
     "lint": "eslint src/**/*.{ts,tsx} --fix",
     "compile": "rm -rf lib && tsc -p ./tsconfig.prod.json",
-    "prepare": "yarn compile",
+    "prepare": "husky install",
     "publish": "npm publish --access public",
     "tsc": "tsc --noEmit"
   },
@@ -40,7 +40,9 @@
     "eslint": "^7.12.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-sort-imports-es6-autofix": "^0.5.0",
+    "husky": "^5.1.3",
     "jest": "^25.1.0",
+    "lint-staged": "^10.5.4",
     "metro-react-native-babel-preset": "^0.59.0",
     "prettier": "^2.1.2",
     "react-test-renderer": "16.13.1",
@@ -49,5 +51,13 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --max-warnings 0"
+    ],
+    "example/src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --max-warnings 0"
+    ]
   }
 }
