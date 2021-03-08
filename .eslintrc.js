@@ -19,14 +19,6 @@ module.exports = {
     'import/no-named-as-default': 0,
     'import/named': 0,
     'import/no-amd': 2,
-    'sort-imports-es6-autofix/sort-imports-es6': [
-      2,
-      {
-        ignoreCase: false,
-        ignoreMemberSort: false,
-        memberSyntaxSortOrder: ['none', 'all', 'multiple', 'single'],
-      },
-    ],
     'import/no-unresolved': 0,
     'import/no-named-as-default-member': 0,
     'import/no-commonjs': 'error',
