@@ -80,3 +80,11 @@ export function createThemedUseStyleCreator<T extends Themes>() {
     return createUseStyle(styleCreator);
   };
 }
+
+export function createDefaultStylesCreator<
+  S extends NamedStyles<S> | NamedStyles<any>
+>() {
+  return function <P>(fn: (props: P) => S): S {
+    fn();
+  };
+}
