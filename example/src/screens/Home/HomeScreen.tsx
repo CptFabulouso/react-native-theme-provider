@@ -1,9 +1,9 @@
-import { ScrollView } from 'react-native';
 import React, { useState } from 'react';
+import { ScrollView } from 'react-native';
 
+import useStyle from './styles';
 import { Button, ClassText, Text } from '@components';
 import { useTheme, useThemeDispatch } from '@themes';
-import useStyle from './styles';
 
 const HomeScreen = () => {
   const styles = useStyle();

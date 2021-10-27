@@ -14,13 +14,28 @@ module.exports = {
       'error',
       { varsIgnorePattern: '^_', argsIgnorePattern: '^_' },
     ],
-    'import/namespace': 0,
-    'import/default': 0,
-    'import/no-named-as-default': 0,
+    'import/imports-first': 2,
     'import/named': 0,
     'import/no-amd': 2,
     'import/no-unresolved': 0,
     'import/no-named-as-default-member': 0,
     'import/no-commonjs': 'error',
+    'import/namespace': 0,
+    'import/default': 0,
+    'import/no-named-as-default': 0,
+    'import/order': [
+      'error',
+      {
+        groups: [
+          ['builtin', 'external'],
+          ['internal', 'sibling', 'parent', 'index'],
+        ],
+        alphabetize: {
+          order: 'asc',
+        },
+        pathGroupsExcludedImportTypes: [],
+        'newlines-between': 'always',
+      },
+    ],
   },
 };

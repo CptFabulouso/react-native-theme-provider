@@ -6,10 +6,10 @@ import {
   useStyle,
 } from '@pavelgric/react-native-theme-provider';
 
-export { useStyle };
-
 import darkTheme from './variants/darkTheme';
 import lightTheme from './variants/lightTheme';
+
+export { useStyle };
 
 export const themes = {
   light: lightTheme,
