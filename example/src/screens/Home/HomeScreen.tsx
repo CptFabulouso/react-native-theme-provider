@@ -22,7 +22,10 @@ const HomeScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={ds.flexCenter}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={ds.pageFlexCenter}
+    >
       <Text type="h1">h1</Text>
       <Text type="h2">h2</Text>
       <Text type="h3">h3</Text>

@@ -29,5 +29,5 @@ export type ThemeContextProps<T extends Themes> = {
 export type StyleCreator<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 > = (theme: ExtractThemes<T>, params: P) => StyleObj<S>;

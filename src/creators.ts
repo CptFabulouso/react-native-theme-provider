@@ -1,6 +1,6 @@
+import { useCachedStyle, useStyle, useTheme, useThemeDispatch } from './hooks';
 import { KeyGenerator } from './stylesCache';
 import { NamedStyles, StyleCreator, StyleObj, Themes } from './types';
-import { useCachedStyle, useStyle, useTheme, useThemeDispatch } from './hooks';
 
 export function createUseTheme<T extends Themes>() {
   return function () {
@@ -16,38 +16,38 @@ export function createUseThemeDispatch<T extends Themes>() {
 
 export function createStyle<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>
+  S extends NamedStyles<S> | NamedStyles<any>,
 >(fn: StyleCreator<T, S, undefined>): StyleCreator<T, S, undefined>;
 
 export function createStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 >(fn: StyleCreator<T, S, P>): StyleCreator<T, S, P>;
 
 export function createStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 >(fn: StyleCreator<T, S, P>): StyleCreator<T, S, P> {
   return fn;
 }
 
 export function createUseStyle<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>
+  S extends NamedStyles<S> | NamedStyles<any>,
 >(styleCreator: StyleCreator<T, S, undefined>): () => StyleObj<S>;
 
 export function createUseStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 >(styleCreator: StyleCreator<T, S, P>): (params: P) => StyleObj<S>;
 
 export function createUseStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 >(styleCreator: StyleCreator<T, S, P>) {
   const key = KeyGenerator.getNextKey();
   return (params: P) => {
@@ -68,7 +68,7 @@ export function createThemedStyleCreator<T extends Themes>() {
 
 export function createThemedUseStyleCreator<T extends Themes>(): <
   S extends NamedStyles<S> | NamedStyles<any>,
-  P = undefined
+  P = undefined,
 >(
   styleCreator: StyleCreator<T, S, P>,
 ) => P extends undefined ? () => StyleObj<S> : (params: P) => StyleObj<S>;
@@ -81,10 +81,11 @@ export function createThemedUseStyleCreator<T extends Themes>() {
   };
 }
 
-export function createDefaultStylesCreator<
-  S extends NamedStyles<S> | NamedStyles<any>
->() {
-  return function <P>(fn: (props: P) => S): S {
-    fn();
+export function createStylesWithProps<
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P,
+>(fn: (props: P) => S) {
+  return function (props: P) {
+    return fn(props);
   };
 }

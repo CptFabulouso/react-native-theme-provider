@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
+import { StylesCache } from './stylesCache';
 import {
   ExtractThemes,
   NamedStyles,
@@ -9,17 +11,15 @@ import {
   ThemeDispatchContextValue,
   Themes,
 } from './types';
-import { StylesCache } from './stylesCache';
-import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 
 export function useStyle<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>
+  S extends NamedStyles<S> | NamedStyles<any>,
 >(styleCreator: StyleCreator<T, S, undefined>): StyleObj<S>;
 export function useStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 >(
   styleCreator: StyleCreator<T, S, P>,
   params: P,
@@ -29,7 +29,7 @@ export function useStyle<
 export function useStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 >(
   styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
   params?: P,
@@ -55,7 +55,7 @@ export function useStyle<
 
 export function useCachedStyle<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>
+  S extends NamedStyles<S> | NamedStyles<any>,
 >(
   styleCreator: StyleCreator<T, S, undefined>,
   key: string | number,
@@ -63,13 +63,13 @@ export function useCachedStyle<
 export function useCachedStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 >(styleCreator: StyleCreator<T, S, P>, key: string | number): StyleObj<S>;
 
 export function useCachedStyle<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P
+  P,
 >(
   styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
   key: string | number,
@@ -85,9 +85,9 @@ export function useTheme<T extends Themes>(): ThemeContextValue<T> {
   return context;
 }
 
-export function useThemeDispatch<T extends Themes>(): ThemeDispatchContextValue<
-  T
-> {
+export function useThemeDispatch<
+  T extends Themes,
+>(): ThemeDispatchContextValue<T> {
   const context = React.useContext(ThemeDispatchContext);
   if (context === null) {
     throw new Error('useThemeDispatch must be used within a ThemeProvider');

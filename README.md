@@ -20,6 +20,8 @@
     - [`createThemedStyleCreator`](#createthemedstylecreator)
     - [`createUseTheme`](#createusetheme)
     - [`createUseThemeDispatch`](#createusethemedispatch)
+  - [Helper functions](#helper-functions)
+    - [`createStylesWithProps`](#createstyleswithprops)
   - [Wrappers](#wrappers)
     - [`withUseStyle(Component, useStyleFunc, [mapPropsToParams])`](#withusestylecomponent-usestylefunc-mappropstoparams)
     - [`withCreateStyle(Component, createStyleFunc, [mapPropsToParams, [memoizeKey]])`](#withcreatestylecomponent-createstylefunc-mappropstoparams-memoizekey)
@@ -468,6 +470,36 @@ see [Typescript usage](#typescript-usage)
 ### `createUseThemeDispatch`
 
 see [Typescript usage](#typescript-usage)
+
+## Helper functions
+
+### `createStylesWithProps`
+
+This method allows you to create styles similarly to `StyleSheet.create`, but allows you to pass props.
+This method is used to create base styles in example project.
+
+```js
+import { createStylesWithProps } from '@pavelgric/react-native-theme-provider';
+
+type Colors = {
+    primary: string,
+    secondary: string,
+}
+
+// first create the style creator
+const createStyles = createStylesWithProps((colors: Colors) => ({
+  page: {
+    backgroundColor: colors.surface,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}));
+
+// now we can use this function and pass props
+const lightStyles = createStyles({ primary: 'blue', secondary: 'light-blue' });
+const darkStyles = createStyles({ primary: 'dark-blue', secondary: 'blue' });
+```
 
 ## Wrappers
 
