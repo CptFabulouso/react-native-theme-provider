@@ -1,8 +1,8 @@
-import { Text as RNText, TextProps } from 'react-native';
 import React, { ReactNode } from 'react';
+import { Text as RNText, TextProps } from 'react-native';
 
-import { Typography } from '@themes';
 import useStyle from './styles';
+import { Typography } from '@themes';
 
 type Props = TextProps & {
   type?: keyof Typography;

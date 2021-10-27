@@ -8,5 +8,9 @@ node_modules
 # Runtime data
 tmp
 
+# Configurations
+.vscode
+.husky
+
 # Examples
 example

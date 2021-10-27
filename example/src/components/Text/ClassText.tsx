@@ -1,9 +1,9 @@
-import { Text as RNText, TextProps } from 'react-native';
 import { withUseStyle } from '@pavelgric/react-native-theme-provider';
 import React, { Component, ReactNode } from 'react';
+import { Text as RNText, TextProps } from 'react-native';
 
-import { Typography } from '@themes';
 import useStyle from './styles';
+import { Typography } from '@themes';
 
 type Props = TextProps & {
   styles: ReturnType<typeof useStyle>;

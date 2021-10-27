@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { StylesCache } from './stylesCache';
 import {
   ExtractThemeNames,
   ThemeContextProps,
@@ -7,24 +8,21 @@ import {
   ThemeDispatchContextValue,
   Themes,
 } from './types';
-import { StylesCache } from './stylesCache';
 
 export const ThemeContext = React.createContext<ThemeContextValue<any> | null>(
   null,
 );
 
-export const ThemeDispatchContext = React.createContext<ThemeDispatchContextValue<
-  any
-> | null>(null);
+export const ThemeDispatchContext =
+  React.createContext<ThemeDispatchContextValue<any> | null>(null);
 
 export function ThemeProvider<T extends Themes>({
   children,
   initialTheme,
   themes,
 }: ThemeContextProps<T>) {
-  const [themeName, setThemeName] = React.useState<ExtractThemeNames<T>>(
-    initialTheme,
-  );
+  const [themeName, setThemeName] =
+    React.useState<ExtractThemeNames<T>>(initialTheme);
 
   const changeTheme = (t: any) => {
     StylesCache.resetAll();

@@ -1,4 +1,3 @@
-import { Theme, Typography } from './variants/themeCreator';
 import {
   createStyle,
   createUseStyle,
@@ -8,6 +7,7 @@ import {
   useThemeDispatch,
 } from './Themes';
 import useDefaultStyles from './useDefaultStyles';
+import { Theme, Typography } from './variants/themeCreator';
 
 export {
   createStyle,
