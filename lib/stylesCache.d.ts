@@ -1,4 +1,4 @@
-import { NamedStyles, StyleObj } from './types';
+import { NamedStyles } from './types';
 declare const StylesCache: {
     addStyle: (key: string | number, style: NamedStyles<any> | NamedStyles<unknown>) => void;
     getStyle: (key: string | number) => NamedStyles<any> | NamedStyles<unknown> | undefined;

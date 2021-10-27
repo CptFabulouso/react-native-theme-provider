@@ -7,3 +7,4 @@ export declare function createUseStyle<T extends Themes, S extends NamedStyles<S
 export declare function createUseStyle<T extends Themes, S extends NamedStyles<S> | NamedStyles<any>, P>(styleCreator: StyleCreator<T, S, P>): (params: P) => StyleObj<S>;
 export declare function createThemedStyleCreator<T extends Themes>(): <S extends NamedStyles<any> | NamedStyles<S>, P>(styleCreator: StyleCreator<T, S, P>) => StyleCreator<T, S, P>;
 export declare function createThemedUseStyleCreator<T extends Themes>(): <S extends NamedStyles<S> | NamedStyles<any>, P = undefined>(styleCreator: StyleCreator<T, S, P>) => P extends undefined ? () => StyleObj<S> : (params: P) => StyleObj<S>;
+export declare function createStylesWithProps<S extends NamedStyles<S> | NamedStyles<any>, P>(fn: (props: P) => S): (props: P) => S;
