@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NamedStyles, StyleCreator, StyleObj } from '../types';
+
 import {
   createStyle,
   createThemedStyleCreator,
@@ -7,6 +7,7 @@ import {
   createUseStyle,
 } from '../creators';
 import { useCachedStyle, useStyle } from '../hooks';
+import { NamedStyles, StyleCreator, StyleObj } from '../types';
 import { withCreateStyle, withUseStyle } from '../wrappers';
 
 type Themes = {
@@ -30,7 +31,7 @@ type Themes = {
 
 function createThemedUseStyleCreator<T extends Themes>(): <
   S extends NamedStyles<S> | NamedStyles<any>,
-  P = undefined
+  P = undefined,
 >(
   styleCreator: StyleCreator<T, S, P>,
 ) => P extends undefined ? () => StyleObj<S> : (params: P) => StyleObj<S>;
@@ -156,9 +157,7 @@ type ClassCompWithUseStyleProps = {
   styles: ReturnType<typeof useStyleTest>;
   val: string;
 };
-export class ClassCompUseStyle extends React.Component<
-  ClassCompWithUseStyleProps
-> {
+export class ClassCompUseStyle extends React.Component<ClassCompWithUseStyleProps> {
   render() {
     const { styles } = this.props;
     checkStyle([styles]);
@@ -190,9 +189,7 @@ type ClassCompWithCreateStyleProps = {
   val: string;
 };
 
-export class ClassCompCreateStyle extends React.Component<
-  ClassCompWithCreateStyleProps
-> {
+export class ClassCompCreateStyle extends React.Component<ClassCompWithCreateStyleProps> {
   render() {
     const { styles } = this.props;
     checkStyle([styles]);
