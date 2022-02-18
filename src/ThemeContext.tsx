@@ -7,31 +7,44 @@ import {
   ThemeContextValue,
   ThemeDispatchContextValue,
   Themes,
+  NamedStyles,
 } from './types';
 
-export const ThemeContext = React.createContext<ThemeContextValue<any> | null>(
-  null,
-);
+export const ThemeContext = React.createContext<ThemeContextValue<
+  any,
+  any
+> | null>(null);
 
 export const ThemeDispatchContext =
   React.createContext<ThemeDispatchContextValue<any> | null>(null);
 
-export function ThemeProvider<T extends Themes>({
+export function ThemeProvider<
+  T extends Themes,
+  DS extends NamedStyles<DS> | NamedStyles<any>,
+>({
   children,
   initialTheme,
+  defaultStylesCreator,
   themes,
-}: ThemeContextProps<T>) {
+}: ThemeContextProps<T, DS>) {
   const [themeName, setThemeName] =
     React.useState<ExtractThemeNames<T>>(initialTheme);
 
-  const changeTheme = (t: any) => {
+  const changeTheme = React.useCallback((t: any) => {
     StylesCache.resetAll();
     setThemeName(t);
-  };
+  }, []);
+
+  const t = React.useMemo(() => themes[themeName], [themes, themeName]);
+
+  const defaultStyles = React.useMemo(
+    () => (defaultStylesCreator ? defaultStylesCreator(t) : null),
+    [defaultStylesCreator, t],
+  );
 
   return (
     <ThemeContext.Provider
-      value={{ selectedTheme: themeName, themes, t: themes[themeName] }}
+      value={{ selectedTheme: themeName, themes, t, defaultStyles }}
     >
       <ThemeDispatchContext.Provider value={{ setTheme: changeTheme }}>
         {children}

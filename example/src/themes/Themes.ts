@@ -1,8 +1,5 @@
 import {
-  createThemedStyleCreator,
-  createThemedUseStyleCreator,
-  createUseTheme,
-  createUseThemeDispatch,
+  createThemeBag,
   useStyle,
 } from '@pavelgric/react-native-theme-provider';
 
@@ -18,7 +15,16 @@ export const themes = {
 
 export type Themes = typeof themes;
 
-export const createUseStyle = createThemedUseStyleCreator<Themes>();
-export const createStyle = createThemedStyleCreator<Themes>();
-export const useTheme = createUseTheme<Themes>();
-export const useThemeDispatch = createUseThemeDispatch<Themes>();
+const defStyles = {
+  test: {
+    backgroundColor: 'blue',
+  },
+};
+
+export const {
+  ThemeProvider,
+  createUseStyle,
+  createStyle,
+  useTheme,
+  useThemeDispatch,
+} = createThemeBag<Themes>();

@@ -5,6 +5,7 @@ import {
   useStyle,
   useTheme,
   useThemeDispatch,
+  ThemeProvider,
 } from './Themes';
 import useDefaultStyles from './useDefaultStyles';
 import { Theme, Typography } from './variants/themeCreator';
@@ -17,5 +18,6 @@ export {
   useTheme,
   useThemeDispatch,
   useDefaultStyles,
+  ThemeProvider,
 };
 export type { Theme, Typography };

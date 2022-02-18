@@ -1,12 +1,15 @@
-import { ThemeProvider } from '@pavelgric/react-native-theme-provider';
 import React from 'react';
 
 import HomeScreen from './screens/Home/HomeScreen';
-import { themes } from '@themes';
+import { ThemeProvider, themes } from '@themes';
 
 const App = () => {
   return (
-    <ThemeProvider themes={themes} initialTheme="light">
+    <ThemeProvider
+      themes={themes}
+      initialTheme="light"
+      defaultStylesCreator={() => {}}
+    >
       <HomeScreen />
     </ThemeProvider>
   );

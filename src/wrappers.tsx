@@ -1,24 +1,21 @@
 import * as React from 'react';
 
 import { useCachedStyle, useStyle } from './hooks';
-import { NamedStyles, StyleCreator, StyleObj } from './types';
+import { Styles, StyleCreator, StyleObj } from './types';
 
-export type WithStylesProps<S extends NamedStyles<S> | NamedStyles<any>> = {
+export type WithStylesProps<S extends Styles<S>> = {
   styles: StyleObj<S>;
 };
 
 type InjectedProps<S> = WithStylesProps<S>;
 
-export function withUseStyle<
-  T extends InjectedProps<S>,
-  S extends NamedStyles<S> | NamedStyles<any>,
->(
+export function withUseStyle<T extends InjectedProps<S>, S extends Styles<S>>(
   WrappedComponent: React.ComponentType<T>,
   useStyleParam: () => StyleObj<S>,
 ): React.FC<Omit<T, keyof InjectedProps<S>>>;
 export function withUseStyle<
   T extends InjectedProps<S>,
-  S extends NamedStyles<S> | NamedStyles<any>,
+  S extends Styles<S>,
   P,
 >(
   WrappedComponent: React.ComponentType<T>,
@@ -28,7 +25,7 @@ export function withUseStyle<
 
 export function withUseStyle<
   T extends InjectedProps<S>,
-  S extends NamedStyles<S> | NamedStyles<any>,
+  S extends Styles<S>,
   P,
 >(
   WrappedComponent: React.ComponentType<T>,
@@ -45,14 +42,14 @@ export function withUseStyle<
 
 export function withCreateStyle<
   T extends InjectedProps<S>,
-  S extends NamedStyles<S> | NamedStyles<any>,
+  S extends Styles<S>,
 >(
   WrappedComponent: React.ComponentType<T>,
   styleCreator: StyleCreator<any, S, undefined>,
 ): React.FC<Omit<T, keyof InjectedProps<S>>>;
 export function withCreateStyle<
   T extends InjectedProps<S>,
-  S extends NamedStyles<S> | NamedStyles<any>,
+  S extends Styles<S>,
   P,
 >(
   WrappedComponent: React.ComponentType<T>,
@@ -62,7 +59,7 @@ export function withCreateStyle<
 ): React.FC<Omit<T, keyof InjectedProps<S>>>;
 export function withCreateStyle<
   T extends InjectedProps<S>,
-  S extends NamedStyles<S> | NamedStyles<any>,
+  S extends Styles<S>,
   P,
 >(
   WrappedComponent: React.ComponentType<T>,

@@ -4,7 +4,7 @@ import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 import { StylesCache } from './stylesCache';
 import {
   ExtractThemes,
-  NamedStyles,
+  Styles,
   StyleCreator,
   StyleObj,
   ThemeContextValue,
@@ -14,28 +14,21 @@ import {
 
 export function useStyle<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
+  DS extends Styles<DS>,
+  S extends Styles<S>,
 >(styleCreator: StyleCreator<T, S, undefined>): StyleObj<S>;
-export function useStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(
+export function useStyle<T extends Themes, S extends Styles<S>, P>(
   styleCreator: StyleCreator<T, S, P>,
   params: P,
   key?: string | number,
 ): StyleObj<S>;
 
-export function useStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(
+export function useStyle<T extends Themes, S extends Styles<S>, P>(
   styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
   params?: P,
   key?: string | number,
 ) {
-  const { t } = useTheme<T>();
+  const { t, defaultStyles } = useTheme<T, S>();
 
   const styles = React.useMemo(() => {
     if (!params && key) {
@@ -50,34 +43,36 @@ export function useStyle<
     return styleCreator(t, params);
   }, [styleCreator, t, params, key]);
 
-  return styles;
+  const combinedStyles = React.useMemo(() => {
+    if (!defaultStyles) {
+      return styles;
+    }
+    return { ...defaultStyles, ...styles };
+  }, [styles, defaultStyles]);
+
+  return combinedStyles;
 }
 
-export function useCachedStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
->(
+export function useCachedStyle<T extends Themes, S extends Styles<S>>(
   styleCreator: StyleCreator<T, S, undefined>,
   key: string | number,
 ): StyleObj<S>;
-export function useCachedStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(styleCreator: StyleCreator<T, S, P>, key: string | number): StyleObj<S>;
+export function useCachedStyle<T extends Themes, S extends Styles<S>, P>(
+  styleCreator: StyleCreator<T, S, P>,
+  key: string | number,
+): StyleObj<S>;
 
-export function useCachedStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(
+export function useCachedStyle<T extends Themes, S extends Styles<S>, P>(
   styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
   key: string | number,
 ) {
   return useStyle(styleCreator, undefined, key);
 }
 
-export function useTheme<T extends Themes>(): ThemeContextValue<T> {
+export function useTheme<
+  T extends Themes,
+  DS extends Styles<DS>,
+>(): ThemeContextValue<T, DS> {
   const context = React.useContext(ThemeContext);
   if (context === null) {
     throw new Error('useTheme must be used within a ThemeProvider');

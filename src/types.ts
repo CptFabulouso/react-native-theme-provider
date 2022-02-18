@@ -9,25 +9,33 @@ export type NamedStyles<T> = {
   [P in keyof T]: ViewStyle | TextStyle | ImageStyle;
 };
 
+export type Styles<S> = NamedStyles<S> | NamedStyles<any>;
 export type StyleObj<S extends NamedStyles<S> | NamedStyles<any>> = S;
+export type CombinedStyleObj<S extends Styles<S>, DS extends Styles<DS>> = S &
+  DS;
 
-export type ThemeContextValue<T extends Themes> = {
+export type ThemeContextValue<T extends Themes, DS extends Styles<DS>> = {
   selectedTheme: ExtractThemeNames<T>;
   themes: T;
   t: ExtractThemes<T>;
+  defaultStyles: StyleObj<DS> | null;
 };
 export type ThemeDispatchContextValue<T extends Themes> = {
   setTheme: (t: ExtractThemeNames<T>) => void;
 };
 
-export type ThemeContextProps<T extends Themes> = {
+export interface ThemeContextProps<
+  T extends Themes,
+  DS extends Styles<DS> = never,
+> {
   children: React.ReactNode;
   initialTheme: ExtractThemeNames<T>;
+  defaultStylesCreator: DS extends undefined
+    ? undefined
+    : (theme: ExtractThemes<T>) => StyleObj<DS>;
   themes: T;
-};
+}
 
-export type StyleCreator<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
-> = (theme: ExtractThemes<T>, params: P) => StyleObj<S>;
+export interface StyleCreator<T extends Themes, P> {
+  <S extends Styles<S>>(theme: ExtractThemes<T>, params: P): StyleObj<S>;
+}
