@@ -4,7 +4,7 @@ import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
 import { StylesCache } from './stylesCache';
 import {
   ExtractThemes,
-  NamedStyles,
+  Styles,
   StyleCreator,
   StyleObj,
   ThemeContextValue,
@@ -12,25 +12,18 @@ import {
   Themes,
 } from './types';
 
-export function useStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
->(styleCreator: StyleCreator<T, S, undefined>): StyleObj<S>;
-export function useStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(
+export function useStyle<T extends Themes, S extends Styles<S>>(
+  styleCreator: StyleCreator<T, S>,
+  params?: undefined,
+  key?: string | number,
+): StyleObj<S>;
+export function useStyle<T extends Themes, S extends Styles<S>, P>(
   styleCreator: StyleCreator<T, S, P>,
   params: P,
   key?: string | number,
 ): StyleObj<S>;
 
-export function useStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(
+export function useStyle<T extends Themes, S extends Styles<S>, P>(
   styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
   params?: P,
   key?: string | number,
@@ -53,24 +46,16 @@ export function useStyle<
   return styles;
 }
 
-export function useCachedStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
->(
-  styleCreator: StyleCreator<T, S, undefined>,
+export function useCachedStyle<T extends Themes, S extends Styles<S>>(
+  styleCreator: StyleCreator<T, S>,
   key: string | number,
 ): StyleObj<S>;
-export function useCachedStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(styleCreator: StyleCreator<T, S, P>, key: string | number): StyleObj<S>;
+export function useCachedStyle<T extends Themes, S extends Styles<S>, P>(
+  styleCreator: StyleCreator<T, S, P>,
+  key: string | number,
+): StyleObj<S>;
 
-export function useCachedStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(
+export function useCachedStyle<T extends Themes, S extends Styles<S>, P>(
   styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
   key: string | number,
 ) {

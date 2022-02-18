@@ -3,11 +3,10 @@ import * as React from 'react';
 import {
   createStyle,
   createThemedStyleCreator,
-  // createThemedUseStyleCreator,
+  createThemedUseStyleCreator,
   createUseStyle,
 } from '../creators';
 import { useCachedStyle, useStyle } from '../hooks';
-import { NamedStyles, StyleCreator, StyleObj } from '../types';
 import { withCreateStyle, withUseStyle } from '../wrappers';
 
 type Themes = {
@@ -15,34 +14,6 @@ type Themes = {
     blue: 'blue';
   };
 };
-
-// const createThemedUseStyleCreator = <
-//   S extends NamedStyles<S> | NamedStyles<any>,
-//   P
-// >(
-//   styleCreator: StyleCreator<Themes, S, P>,
-// ) => createUseStyle<Themes, S, P>(styleCreator);
-
-// function createThemedUseStyleCreator<T extends Themes>(): <
-//   S extends NamedStyles<S> | NamedStyles<any>
-// >(
-//   styleCreator: StyleCreator<T, S, undefined>,
-// ) => () => StyleObj<S>;
-
-function createThemedUseStyleCreator<T extends Themes>(): <
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P = undefined,
->(
-  styleCreator: StyleCreator<T, S, P>,
-) => P extends undefined ? () => StyleObj<S> : (params: P) => StyleObj<S>;
-
-function createThemedUseStyleCreator<T extends Themes>() {
-  return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
-    styleCreator: StyleCreator<T, S, P>,
-  ) {
-    return createUseStyle<T, S, P>(styleCreator);
-  };
-}
 
 const styleCreator = createStyle((t) => ({
   container: {

@@ -9,6 +9,7 @@ export type NamedStyles<T> = {
   [P in keyof T]: ViewStyle | TextStyle | ImageStyle;
 };
 
+export type Styles<S> = NamedStyles<S> | NamedStyles<any>;
 export type StyleObj<S extends NamedStyles<S> | NamedStyles<any>> = S;
 
 export type ThemeContextValue<T extends Themes> = {
@@ -29,5 +30,5 @@ export type ThemeContextProps<T extends Themes> = {
 export type StyleCreator<
   T extends Themes,
   S extends NamedStyles<S> | NamedStyles<any>,
-  P,
+  P = undefined,
 > = (theme: ExtractThemes<T>, params: P) => StyleObj<S>;

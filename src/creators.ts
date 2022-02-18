@@ -1,6 +1,6 @@
 import { useCachedStyle, useStyle, useTheme, useThemeDispatch } from './hooks';
 import { KeyGenerator } from './stylesCache';
-import { NamedStyles, StyleCreator, StyleObj, Themes } from './types';
+import { Styles, StyleCreator, StyleObj, Themes } from './types';
 
 export function createUseTheme<T extends Themes>() {
   return function () {
@@ -14,41 +14,31 @@ export function createUseThemeDispatch<T extends Themes>() {
   };
 }
 
-export function createStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
->(fn: StyleCreator<T, S, undefined>): StyleCreator<T, S, undefined>;
+export function createStyle<T extends Themes, S extends Styles<S>>(
+  fn: StyleCreator<T, S>,
+): StyleCreator<T, S>;
 
-export function createStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(fn: StyleCreator<T, S, P>): StyleCreator<T, S, P>;
+export function createStyle<T extends Themes, S extends Styles<S>, P>(
+  fn: StyleCreator<T, S, P>,
+): StyleCreator<T, S, P>;
 
-export function createStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(fn: StyleCreator<T, S, P>): StyleCreator<T, S, P> {
+export function createStyle<T extends Themes, S extends Styles<S>, P>(
+  fn: StyleCreator<T, S, P>,
+): StyleCreator<T, S, P> {
   return fn;
 }
 
 export function createUseStyle<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
->(styleCreator: StyleCreator<T, S, undefined>): () => StyleObj<S>;
+  S extends Styles<S>,
+  P = undefined,
+>(
+  styleCreator: StyleCreator<T, S, P>,
+): (...params: P extends undefined ? [] : [params: P]) => StyleObj<S>;
 
-export function createUseStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(styleCreator: StyleCreator<T, S, P>): (params: P) => StyleObj<S>;
-
-export function createUseStyle<
-  T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(styleCreator: StyleCreator<T, S, P>) {
+export function createUseStyle<T extends Themes, S extends Styles<S>, P>(
+  styleCreator: StyleCreator<T, S, P>,
+) {
   const key = KeyGenerator.getNextKey();
   return (params: P) => {
     if (params) {
@@ -59,33 +49,23 @@ export function createUseStyle<
 }
 
 export function createThemedStyleCreator<T extends Themes>() {
-  return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
+  return function <S extends Styles<S>, P>(
     styleCreator: StyleCreator<T, S, P>,
   ) {
     return createStyle<T, S, P>(styleCreator);
   };
 }
-
 export function createThemedUseStyleCreator<T extends Themes>(): <
-  S extends NamedStyles<S> | NamedStyles<any>,
+  S extends Styles<S>,
   P = undefined,
 >(
   styleCreator: StyleCreator<T, S, P>,
-) => P extends undefined ? () => StyleObj<S> : (params: P) => StyleObj<S>;
+) => (...params: P extends undefined ? [] : [params: P]) => StyleObj<S>;
 
 export function createThemedUseStyleCreator<T extends Themes>() {
-  return function <S extends NamedStyles<S> | NamedStyles<any>, P>(
+  return function <S extends Styles<S>, P>(
     styleCreator: StyleCreator<T, S, P>,
   ) {
     return createUseStyle(styleCreator);
-  };
-}
-
-export function createStylesWithProps<
-  S extends NamedStyles<S> | NamedStyles<any>,
-  P,
->(fn: (props: P) => S) {
-  return function (props: P) {
-    return fn(props);
   };
 }
