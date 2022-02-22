@@ -13,7 +13,6 @@
   - [Exported functions](#exported-functions)
     - [`createStyle`](#createstyle)
     - [`useStyle`](#usestyle)
-    - [`useCachedStyle`](#usecachedstyle)
     - [`createUseStyle`](#createusestyle)
     - [`useTheme`](#usetheme)
     - [`useThemeDispatch`](#usethemedispatch)
@@ -41,15 +40,15 @@
 
 const blueTheme = {
   colors: {
-    primary: 'blue'
-  }
-}
+    primary: 'blue',
+  },
+};
 
 const redTheme = {
   colors: {
-    primary: 'red'
-  }
-}
+    primary: 'red',
+  },
+};
 
 // you can have as many themes as you want
 export const themes = {
@@ -68,15 +67,12 @@ import { ThemeProvider } from '@pavelgric/react-native-theme-provider';
 import { themes } from './themes';
 
 export default App = () => {
-  return(
-    <ThemeProvider
-      themes={themes}
-      initialTheme="red"
-    >
+  return (
+    <ThemeProvider themes={themes} initialTheme="red">
       <InnerComponent />
     </ThemeProvider>
-  )
-}
+  );
+};
 ```
 
 ### Access theme from any component
@@ -91,7 +87,7 @@ import { createStyle, useStyle } from '@pavelgric/react-native-theme-provider';
 // create styleCreator, the passed 't' is current theme object
 const styleCreator = createStyle((t) => ({
   container: {
-    backgroundColor: t.colors.primary
+    backgroundColor: t.colors.primary,
   },
 }));
 
@@ -99,10 +95,8 @@ export default InnerComponent = () => {
   // pass the styleCreator
   const styles = useStyle(styleCreator);
 
-  return (
-    <View style={styles.container} />
-  )
-}
+  return <View style={styles.container} />;
+};
 ```
 
 Alternatively you can use `createUseStyle` helper function to remove few lines of code
@@ -117,17 +111,15 @@ import { createUseStyle } from '@pavelgric/react-native-theme-provider';
 // createUseStyle basically returns (fn) => useStyle(fn)
 const useStyle = createUseStyle((t) => ({
   container: {
-    backgroundColor: t.colors.primary
+    backgroundColor: t.colors.primary,
   },
 }));
 
 export default InnerComponent = () => {
   const styles = useStyle();
 
-  return (
-    <View style={styles.container} />
-  )
-}
+  return <View style={styles.container} />;
+};
 ```
 
 ### Lastly to change or access theme
@@ -137,7 +129,10 @@ export default InnerComponent = () => {
 
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useThemeDispatch, useTheme } from '@pavelgric/react-native-theme-provider';
+import {
+  useThemeDispatch,
+  useTheme,
+} from '@pavelgric/react-native-theme-provider';
 
 export default SomeComponent = () => {
   // selectedTheme is the key of selected theme
@@ -150,18 +145,20 @@ export default SomeComponent = () => {
   // to access current theme object, or use t
   const themeObj = themes[selectedTheme];
 
-  return(
+  return (
     <View>
       <Text>{`current theme is ${selectedTheme}`}</Text>
-      <TouchableOpacity onPress={() => {
-        const nextTheme = selectedTheme === 'red'? 'blue' : 'red'
-        setTheme(nextTheme)
-      }}>
+      <TouchableOpacity
+        onPress={() => {
+          const nextTheme = selectedTheme === 'red' ? 'blue' : 'red';
+          setTheme(nextTheme);
+        }}
+      >
         <Text>Change theme</Text>
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 ```
 
 ## Passing params to style creator
@@ -181,19 +178,19 @@ import React from 'react';
 import { View } from 'react-native';
 import { createStyle, useStyle } from '@pavelgric/react-native-theme-provider';
 
-const styleCreator = createStyle((t, { borderColor }: {borderColor: string}) => ({
-  container: {
-    backgroundColor: t.colors.primary
-  },
-}));
+const styleCreator = createStyle(
+  (t, { borderColor }: { borderColor: string }) => ({
+    container: {
+      backgroundColor: t.colors.primary,
+    },
+  }),
+);
 
 export default InnerComponent = () => {
   const styles = useStyle(styleCreator, { borderColor: 'blue' });
 
-  return (
-    <View style={styles.container} />
-  )
-}
+  return <View style={styles.container} />;
+};
 ```
 
 using `createUseStyle`
@@ -205,20 +202,20 @@ import React from 'react';
 import { View } from 'react-native';
 import { createUseStyle } from '@pavelgric/react-native-theme-provider';
 
-const useStyle = createUseStyle((t, { borderColor }: {borderColor: string}) => ({
-  container: {
-    backgroundColor: t.colors.primary,
-    borderColor,
-  },
-}));
+const useStyle = createUseStyle(
+  (t, { borderColor }: { borderColor: string }) => ({
+    container: {
+      backgroundColor: t.colors.primary,
+      borderColor,
+    },
+  }),
+);
 
 export default InnerComponent = () => {
   const styles = useStyle({ borderColor: 'blue' });
 
-  return (
-    <View style={styles.container} />
-  )
-}
+  return <View style={styles.container} />;
+};
 ```
 
 using themed `createThemedUseStyleCreator`
@@ -265,6 +262,7 @@ Define your themes and use creator functions
 ```js
 // themes.js
 import {
+  initThemeProvider
   createThemedStyleCreator,
   createThemedUseStyleCreator,
   createUseTheme,
@@ -293,49 +291,114 @@ export const themes = {
 export type Themes = typeof themes;
 // useStyle does not depend on Theme, this is just to make it also accessible from here
 export { useStyle };
+export const {
+  createUseStyle,
+  createStyle,
+  useTheme,
+  useThemeDispatch,
+  ThemeProvider,
+} = initThemeProvider({ themes, initialTheme: 'light' });
+// alternatively you can create each function individually
 export const createStyle = createThemedStyleCreator<Themes>();
 export const createUseStyle = createThemedUseStyleCreator<Themes>();
 export const useTheme = createUseTheme<Themes>();
 export const useThemeDispatch = createUseThemeDispatch<Themes>();
 ```
 
-now instead of importing the functions directly from this package
+now instead of importing the functions directly from this package you import them from the `themes.js` file
 
 ```js
-import { createStyle, createUseStyle, useTheme, useThemeDispatch, useStyle } from '@pavelgric/react-native-theme-provider';
-```
-
-you import them from the `themes.js` file
-
-```js
-import { createStyle, createUseStyle, useTheme, useThemeDispatch, useStyle } from './path/to/themes.js';
+import {
+  createStyle,
+  createUseStyle,
+  useTheme,
+  useThemeDispatch,
+  useStyle,
+} from './path/to/themes.js'; // not from @pavelgric/react-native-theme-provider
 ```
 
 now these functions are typed
 
 ```js
-import { createStyle, /* or createUseStyle */ } from './path/to/themes.js'; 
+import { createStyle /* or createUseStyle */ } from './path/to/themes.js';
 // t is now of type Theme
 const styleCreator = createStyle((t) => ({
   container: {
-    backgroundColor: t.colors.primary
+    backgroundColor: t.colors.primary,
   },
 }));
 ```
 
+use the typed ThemeProvider, you don't need to pass anything, that's handled by the initializer
+
+```js
+import { ThemedProvider } from './path/to/themes.js';
+
+export default App = () => {
+  return (
+    <ThemeProvider>
+      <InnerComponent />
+    </ThemeProvider>
+  );
+};
+```
+
 ## Exported functions
+
+### `initThemeProvider`
+
+Helper function to generate all needed functions and type them with Typescript
+
+Function caches all styleCreators, imagine Image you have `ThemedText` component used all over the place, without caching, each `useStyle` would create new style object, but with cache the style object is created only once and then is reused. Caching is currently ignored if you pass params to style creator. You can change the caching by passing `styleCreatorCache`, if you do so, you should also reset the cache in `onThemeChange` callback, so all styles recalculate.
+
+```js
+import {
+  initThemeProvider
+} from '@pavelgric/react-native-theme-provider';
+
+const blueTheme = {
+  colors: {
+    primary: 'blue'
+  }
+}
+
+const redTheme = {
+  colors: {
+    primary: 'red'
+  }
+}
+
+// you can have as many themes as you want
+export const themes = {
+  blue: blueTheme,
+  red: redTheme,
+};
+
+export const {
+  createUseStyle,
+  createStyle,
+  useTheme,
+  useThemeDispatch,
+  ThemeProvider,
+} = initThemeProvider({
+  themes,
+  initialTheme: 'light',
+  onThemeChange: (nextThemeName) => {}
+  styleCreatorCache: (styleCreator) => styleCreator
+});
+```
 
 ### `createStyle`
 
 This function is to create style object, similar to `StyleSheet.create`, except you receive the theme object and optional params. The function returns styleCreator, which is to be passed to `useStyle`.
 
 ```js
-import { createStyle } from '@pavelgric/react-native-theme-provider'; 
+import { createStyle } from '@pavelgric/react-native-theme-provider';
 
 const styleCreator = createStyle((t, passedParams) => ({
   container: {
     backgroundColor: t.colors.primary,
-    opacity: passedParams.disabled? 0.5 : 1,
+    opacity: passedParams.disabled ? 0.5 : 1,
   },
 }));
 ```
@@ -353,65 +416,38 @@ Note that if you pass params as object and don't want to calculate style on each
 import { useMemo } from 'react';
 import { useStyle } from '@pavelgric/react-native-theme-provider';
 
-import styleCreator from './styles'
+import styleCreator from './styles';
 
-export default FooComponent = ({disabled}) => {
+export default FooComponent = ({ disabled }) => {
   // memoize params, to prevent unnecessary renders
-  const styleParams = useMemo(() => ({ disabled }), [disabled])
+  const styleParams = useMemo(() => ({ disabled }), [disabled]);
   const styles = useStyle(styleCreator, styleParams);
 
-  return <YourComponents style={styles.container} />
-}
-```
-
-### `useCachedStyle`
-
-Similar to `useStyle`, but the object created in styleCreator is cached, so we don't create new instance for every component.
-
-Image you have `ThemedText` component used all over the place, with `useStyle` each of the `ThemedText` component has its own style object.
-With `useCachedStyle` only one style object is created and shared by all `ThemedText` components.
-Beware that because all components share one style object this function doesn't currently allow passing params. That may be allowed in future
-
-Technically this function just wraps `useStyle` and you can achieve the same by using `useStyle(styleCreator, undefined, 'UniqueKey')`,
-the `useCachedStyle` just avoids that weird syntax. Still if you would try passing params instead of `undefined`, the cache won't be used, there is no bypassing.
-
-```js
-import { Text } from 'react-native';
-import { useCachedStyle } from '@pavelgric/react-native-theme-provider';
-
-import styleCreator from './styles'
-
-export default ThemedText = ({disabled}) => {
-  const styles = useCachedStyle(styleCreator, 'ThemedText');
-
-  // useCachedStyle doesn't allow passing params, handle conditional styles in component
-  return <Text style={[styles.container, { opacity: disabled? 0.5 : 1 }]} />
-}
+  return <YourComponents style={styles.container} />;
+};
 ```
 
 ### `createUseStyle`
 
 This combines `createStyle` and `useStyle` into one function and returns `useStyle` function for direct use.
 
-If you don't pass params, style is automatically cached with `useCachedStyle`, otherwise `useStyle` is used.
-
 ```js
-import { createUseStyle } from '@pavelgric/react-native-theme-provider'; 
+import { createUseStyle } from '@pavelgric/react-native-theme-provider';
 
 const useStyle = createUseStyle((t, passedParams) => ({
   container: {
     backgroundColor: t.colors.primary,
-    opacity: passedParams.disabled? 0.5 : 1,
+    opacity: passedParams.disabled ? 0.5 : 1,
   },
 }));
 
-export default FooComponent = ({disabled}) => {
+export default FooComponent = ({ disabled }) => {
   // memoize params, to prevent unnecessary renders
-  const styleParams = useMemo(() => ({ disabled }), [disabled])
+  const styleParams = useMemo(() => ({ disabled }), [disabled]);
   const styles = useStyle(styleParams);
 
-  return <YourComponents style={styles.container} />
-}
+  return <YourComponents style={styles.container} />;
+};
 ```
 
 ### `useTheme`
@@ -422,18 +458,18 @@ Access theme in any Component.
 import { useTheme } from '@pavelgric/react-native-theme-provider';
 
 export default SomeComponent = () => {
-  const { 
+  const {
     selectedTheme, // the key of selected theme
     themes, // the whole themes object
-    t // current theme object
+    t, // current theme object
   } = useTheme();
   const { setTheme } = useThemeDispatch();
 
   // to access current theme object, or use t
   const themeObj = themes[selectedTheme];
 
-  return <Component />
-}
+  return <Component />;
+};
 ```
 
 ### `useThemeDispatch`
@@ -446,17 +482,25 @@ import { useThemeDispatch } from '@pavelgric/react-native-theme-provider';
 export default SomeComponent = () => {
   const { setTheme } = useThemeDispatch();
 
-  return(
+  return (
     <View>
-      <TouchableOpacity onPress={() => {setTheme('blue')}}>
+      <TouchableOpacity
+        onPress={() => {
+          setTheme('blue');
+        }}
+      >
         <Text>Set blue theme</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => {setTheme('red')}}>
+      <TouchableOpacity
+        onPress={() => {
+          setTheme('red');
+        }}
+      >
         <Text>Set red theme</Text>
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 ```
 
 ### `createThemedStyleCreator`
@@ -482,9 +526,9 @@ This method is used to create base styles in example project.
 import { createStylesWithProps } from '@pavelgric/react-native-theme-provider';
 
 type Colors = {
-    primary: string,
-    secondary: string,
-}
+  primary: string,
+  secondary: string,
+};
 
 // first create the style creator
 const createStyles = createStylesWithProps((colors: Colors) => ({
@@ -513,13 +557,13 @@ import { useStyle, withUseStyle } from '@pavelgric/react-native-theme-provider';
 const useStyle = createUseStyle((t, passedParams) => ({
   container: {
     backgroundColor: t.colors.primary,
-    opacity: passedParams.disabled? 0.5 : 1,
+    opacity: passedParams.disabled ? 0.5 : 1,
   },
 }));
 
 type ClassCompProps = {
-  styles: ReturnType<typeof useStyle>;
-  disabled: boolean;
+  styles: ReturnType<typeof useStyle>,
+  disabled: boolean,
 };
 
 export class ClassComp extends Component<ClassCompProps> {
@@ -532,9 +576,8 @@ export class ClassComp extends Component<ClassCompProps> {
 const ClassCompWithStyle = withUseStyle(
   ClassComp,
   useStyle,
-  ({disabled}) => ({disabled})
+  ({ disabled }) => ({ disabled }),
 );
-
 ```
 
 ### `withCreateStyle(Component, createStyleFunc, [mapPropsToParams, [memoizeKey]])`
@@ -543,18 +586,21 @@ Passes styles as prop to class component created from createStyle using `styleCr
 To memoize the resulting style object, you must pass undefined in `mapPropsToParams` and then some unique key.
 
 ```js
-import { styleCreator, withCreateStyle } from '@pavelgric/react-native-theme-provider';
+import {
+  styleCreator,
+  withCreateStyle,
+} from '@pavelgric/react-native-theme-provider';
 
 const styleCreator = createStyle((t, passedParams) => ({
   container: {
     backgroundColor: t.colors.primary,
-    opacity: passedParams.disabled? 0.5 : 1,
+    opacity: passedParams.disabled ? 0.5 : 1,
   },
 }));
 
 type ClassCompProps = {
-  styles: ReturnType<typeof styleCreator>;
-  disabled: boolean;
+  styles: ReturnType<typeof styleCreator>,
+  disabled: boolean,
 };
 
 export class ClassComp extends Component<ClassCompProps> {
@@ -567,16 +613,15 @@ export class ClassComp extends Component<ClassCompProps> {
 const ClassCompWithStyle = withCreateStyle(
   ClassComp,
   styleCreator,
-  ({disabled}) => ({disabled})
+  ({ disabled }) => ({ disabled }),
 );
 
 const ClassCompWithStyleMemoized = withCreateStyle(
   ClassComp,
   styleCreator,
   undefined,
-  'UniqueKey'
+  'UniqueKey',
 );
-
 ```
 
 ## Recommendations
@@ -587,34 +632,33 @@ Use creator function to ensure all theme objects have same shape, otherwise keys
 // color pallete
 const pallete = {
   red: 'red',
-  blue: 'blue'
-}
+  blue: 'blue',
+};
 
-type Color =
-  | 'primary'
+type Color = 'primary';
 
 type Props = {
-  colors: Record<Color, string>;
+  colors: Record<Color, string>,
 };
 
 export const createTheme = (props: Props) => ({
-  colors: props.colors
-})
+  colors: props.colors,
+});
 
 const redThemeColors = {
-  primary: pallete.red
+  primary: pallete.red,
 };
 
 const blueThemeColors = {
-  primary: pallete.blue
+  primary: pallete.blue,
 };
 
-export const redTheme = createTheme({colors: redThemeColors});
-export const blueTheme = createTheme({colors: blueThemeColors});
+export const redTheme = createTheme({ colors: redThemeColors });
+export const blueTheme = createTheme({ colors: blueThemeColors });
 export const themes = {
   redTheme,
-  blueTheme
-}
+  blueTheme,
+};
 ```
 
 It would be nice to have function that would warn about missing keys, but I didn't find way how to do that. Ideally something like:
@@ -623,20 +667,20 @@ It would be nice to have function that would warn about missing keys, but I didn
 const blueTheme = {
   colors: {
     primary: 'blue',
-    secondary: 'yellow'
-  }
-}
+    secondary: 'yellow',
+  },
+};
 
 const redTheme = {
   colors: {
-    primary: 'red'
-  }
-}
+    primary: 'red',
+  },
+};
 
 export const themes = createThemes({
   blueTheme,
   redTheme, // warn red theme is missing key 'secondary'
-})
+});
 ```
 
 ## Example
@@ -645,4 +689,4 @@ See example for semi-complete solution
 
 to run example, you need to install dependencies both on package and example level, so navigate to this package in terminal and run
 
-`yarn && cd example && yarn && cd ios && pod install`;
+`yarn && cd example && yarn && cd ios && pod install`;
