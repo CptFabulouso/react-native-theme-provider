@@ -24,6 +24,7 @@ export type ThemeDispatchContextValue<T extends Themes> = {
 export type ThemeContextProps<T extends Themes> = {
   children: React.ReactNode;
   initialTheme: ExtractThemeNames<T>;
+  onThemeChange?: (nextThemeName: ExtractThemeNames<T>) => void;
   themes: T;
 };
 
@@ -32,3 +33,9 @@ export type StyleCreator<
   S extends NamedStyles<S> | NamedStyles<any>,
   P = undefined,
 > = (theme: ExtractThemes<T>, params: P) => StyleObj<S>;
+
+export type StyleCreatorCache<
+  T extends Themes,
+  S extends NamedStyles<S> | NamedStyles<any>,
+  P = undefined,
+> = (creator: StyleCreator<T, S, P>) => StyleCreator<T, S, P>;

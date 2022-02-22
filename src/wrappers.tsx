@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { useCachedStyle, useStyle } from './hooks';
+import { useStyle } from './hooks';
 import { Styles, StyleCreator, StyleObj } from './types';
 
 export type WithStylesProps<S extends Styles<S>> = {
@@ -65,14 +65,11 @@ export function withCreateStyle<
   WrappedComponent: React.ComponentType<T>,
   styleCreator: (theme: any, p?: P) => StyleObj<S>,
   mapPropsToParams?: (props: Omit<T, keyof InjectedProps<S>>) => P,
-  key?: string | number,
 ): React.FC<Omit<T, keyof InjectedProps<S>>> {
   return (props) => {
     const params = mapPropsToParams ? mapPropsToParams(props) : undefined;
     const styles = params
-      ? useStyle(styleCreator, params, key)
-      : key
-      ? useCachedStyle(styleCreator, key)
+      ? useStyle(styleCreator, params)
       : useStyle(styleCreator);
 
     return <WrappedComponent {...(props as T)} styles={styles} />;

@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { StylesCache } from './stylesCache';
 import {
   ExtractThemeNames,
   ThemeContextProps,
@@ -19,15 +18,19 @@ export const ThemeDispatchContext =
 export function ThemeProvider<T extends Themes>({
   children,
   initialTheme,
+  onThemeChange,
   themes,
 }: ThemeContextProps<T>) {
   const [themeName, setThemeName] =
     React.useState<ExtractThemeNames<T>>(initialTheme);
 
-  const changeTheme = (t: any) => {
-    StylesCache.resetAll();
-    setThemeName(t);
-  };
+  const changeTheme = React.useCallback(
+    (t: any) => {
+      onThemeChange && onThemeChange(t);
+      setThemeName(t);
+    },
+    [onThemeChange],
+  );
 
   return (
     <ThemeContext.Provider

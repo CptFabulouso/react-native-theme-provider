@@ -1,14 +1,5 @@
-import {
-  createStyle,
-  createUseStyle,
-  themes,
-  useStyle,
-  useTheme,
-  useThemeDispatch,
-} from './Themes';
-import useDefaultStyles from './useDefaultStyles';
 import { Theme, Typography } from './variants/themeCreator';
-
+export { default as useDefaultStyles } from './useDefaultStyles';
 export {
   createStyle,
   createUseStyle,
@@ -16,6 +7,7 @@ export {
   useStyle,
   useTheme,
   useThemeDispatch,
-  useDefaultStyles,
-};
+  ThemeProvider,
+} from './Themes';
+
 export type { Theme, Typography };

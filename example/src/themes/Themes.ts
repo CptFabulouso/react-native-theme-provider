@@ -1,9 +1,6 @@
 import {
-  createThemedStyleCreator,
-  createThemedUseStyleCreator,
-  createUseTheme,
-  createUseThemeDispatch,
   useStyle,
+  initThemeProvider,
 } from '@pavelgric/react-native-theme-provider';
 
 import darkTheme from './variants/darkTheme';
@@ -18,7 +15,10 @@ export const themes = {
 
 export type Themes = typeof themes;
 
-export const createUseStyle = createThemedUseStyleCreator<Themes>();
-export const createStyle = createThemedStyleCreator<Themes>();
-export const useTheme = createUseTheme<Themes>();
-export const useThemeDispatch = createUseThemeDispatch<Themes>();
+export const {
+  createUseStyle,
+  createStyle,
+  useTheme,
+  useThemeDispatch,
+  ThemeProvider,
+} = initThemeProvider({ themes, initialTheme: 'light' });
