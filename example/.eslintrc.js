@@ -1,47 +1,16 @@
-/* eslint-disable import/no-commonjs */
 module.exports = {
   root: true,
+  extends: '@react-native-community',
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'import'],
-  extends: [
-    '@react-native-community',
-    'plugin:import/errors',
-    'plugin:import/warnings',
-  ],
-  rules: {
-    'no-console': ['error', { allow: ['warn'] }],
-    'import/imports-first': 2,
-    'import/named': 0,
-    'import/no-amd': 2,
-    'import/no-unresolved': 0,
-    'import/no-named-as-default-member': 0,
-    'import/no-commonjs': 'error',
-    'import/namespace': 0,
-    'import/default': 0,
-    'import/no-named-as-default': 0,
-    'import/order': [
-      'error',
-      {
-        groups: [
-          ['builtin', 'external'],
-          ['internal', 'sibling', 'parent', 'index'],
-        ],
-        pathGroups: [
-          {
-            pattern: '@themes',
-            group: 'internal',
-          },
-          {
-            pattern: '@components',
-            group: 'internal',
-          },
-        ],
-        alphabetize: {
-          order: 'asc',
-        },
-        pathGroupsExcludedImportTypes: [],
-        'newlines-between': 'always',
+  plugins: ['@typescript-eslint'],
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      rules: {
+        '@typescript-eslint/no-shadow': ['error'],
+        'no-shadow': 'off',
+        'no-undef': 'off',
       },
-    ],
-  },
+    },
+  ],
 };
