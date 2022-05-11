@@ -14,7 +14,8 @@
     "outDir": "./lib",
     "sourceMap": true,
     "strict": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "skipLibCheck": true
   },
   "include": [
     "src",
@@ -22,6 +23,7 @@
   ],
   "exclude": [
     "node_modules",
-    "example"
+    "example",
+    "node_modules/@types/react-native/globals.d.ts"
   ]
 }
