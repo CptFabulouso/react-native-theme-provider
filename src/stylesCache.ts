@@ -1,4 +1,10 @@
-import { Styles, StyleObj } from './types';
+import {
+  Styles,
+  StyleObj,
+  Themes,
+  StyleCacheManager,
+  StyleCreator,
+} from './types';
 
 const createKeyGenerator = () => {
   let lastKey: number = 0;
@@ -34,7 +40,34 @@ const createStylesCache = <S extends Styles<S>>() => {
     },
   };
 };
-
 const DefaultStylesCache = createStylesCache<any>();
 
+export function getThemedDefaultCacheManager<
+  T extends Themes,
+  S extends Styles<S>,
+  P,
+>(): StyleCacheManager<T, S, P> {
+  return {
+    /*
+      Clearing the cache on mount fixes duplicates in cache during development with enabled fast refresh.
+      This should not affect production app anyhow, since it should be mounted only once
+    */
+    onProviderMount: () => DefaultStylesCache.resetAll(),
+    onThemeChange: () => DefaultStylesCache.resetAll(),
+    onCacheStyleCreator: (styleCreator: StyleCreator<T, S, P>) => {
+      // generate id for each style creator
+      const id = DefaultStylesCache.generateId();
+
+      return (t, params) => {
+        const cachedStyle = DefaultStylesCache.getStyle(id, params);
+        if (cachedStyle) {
+          return cachedStyle;
+        }
+        const style = styleCreator(t, params);
+        DefaultStylesCache.addStyle(id, style, params);
+        return style;
+      };
+    },
+  };
+}
 export default DefaultStylesCache;

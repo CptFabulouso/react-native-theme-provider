@@ -24,8 +24,8 @@ export type ThemeDispatchContextValue<T extends Themes> = {
 export type ThemeContextProps<T extends Themes> = {
   children: React.ReactNode;
   initialTheme: ExtractThemeNames<T>;
-  onThemeChange?: (nextThemeName: ExtractThemeNames<T>) => void;
   themes: T;
+  onThemeChange?: (nextThemeName: ExtractThemeNames<T>) => void;
 };
 
 export type StyleCreator<
@@ -40,7 +40,11 @@ export type StyleCacheManager<
   P = undefined,
 > = {
   /**
-    modify your cache if theme changes
+   * Called when mounting the ThemeProvider.
+   */
+  onProviderMount?: () => void;
+  /**
+    Modify your cache if theme changes
   */
   onThemeChange: (themeName: keyof T) => void;
   /**
@@ -50,4 +54,11 @@ export type StyleCacheManager<
   onCacheStyleCreator: (
     styleCreator: StyleCreator<T, S, P>,
   ) => StyleCreator<T, S, P>;
+};
+
+export type InitThemeProviderParams<T extends Themes> = {
+  themes: T;
+  initialTheme: ExtractThemeNames<T>;
+  onThemeChange?: (nextThemeName: keyof T) => void;
+  styleCacheManager?: StyleCacheManager<T, any, any>;
 };
