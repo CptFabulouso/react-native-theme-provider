@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { ThemeProvider } from './ThemeContext';
 import { useStyle, useTheme, useThemeDispatch } from './hooks';
-import { getThemedDefaultCacheManager } from './stylesCache';
+import { createDefaultCacheManager } from './stylesCache';
 import {
   Styles,
   StyleCreator,
@@ -23,6 +23,13 @@ export function createThemedUseThemeDispatch<T extends Themes>() {
   return function () {
     return useThemeDispatch<T>();
   };
+}
+
+export function createThemedDefaultCacheManager<T extends Themes>() {
+  function themedCacheManager<S extends Styles<S>, P>() {
+    return createDefaultCacheManager<T, S, P>();
+  }
+  return themedCacheManager();
 }
 
 export function createStyleCreator<T extends Themes, S extends Styles<S>>(
@@ -99,7 +106,7 @@ export function initThemeProvider<T extends Themes>({
   themes,
   initialTheme,
   onThemeChange,
-  styleCacheManager = getThemedDefaultCacheManager<T, any, any>(),
+  styleCacheManager = createThemedDefaultCacheManager<T>(),
 }: InitThemeProviderParams<T>) {
   const ThemedThemedProvider = ({
     children,

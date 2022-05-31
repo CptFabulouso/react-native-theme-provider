@@ -55,7 +55,6 @@ export function withCreateStyle<
   WrappedComponent: React.ComponentType<T>,
   styleCreator: StyleCreator<any, S, P>,
   mapPropsToParams: (props: Omit<T, keyof InjectedProps<S>>) => P,
-  key?: string | number,
 ): React.FC<Omit<T, keyof InjectedProps<S>>>;
 export function withCreateStyle<
   T extends InjectedProps<S>,

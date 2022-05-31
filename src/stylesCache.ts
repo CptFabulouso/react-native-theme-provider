@@ -1,10 +1,4 @@
-import {
-  Styles,
-  StyleObj,
-  Themes,
-  StyleCacheManager,
-  StyleCreator,
-} from './types';
+import { Styles, StyleObj, Themes, StyleCacheManager } from './types';
 
 const createKeyGenerator = () => {
   let lastKey: number = 0;
@@ -42,7 +36,7 @@ const createStylesCache = <S extends Styles<S>>() => {
 };
 const DefaultStylesCache = createStylesCache<any>();
 
-export function getThemedDefaultCacheManager<
+export function createDefaultCacheManager<
   T extends Themes,
   S extends Styles<S>,
   P,
@@ -54,7 +48,7 @@ export function getThemedDefaultCacheManager<
     */
     onProviderMount: () => DefaultStylesCache.resetAll(),
     onThemeChange: () => DefaultStylesCache.resetAll(),
-    onCacheStyleCreator: (styleCreator: StyleCreator<T, S, P>) => {
+    onCacheStyleCreator: (styleCreator) => {
       // generate id for each style creator
       const id = DefaultStylesCache.generateId();
 
@@ -70,4 +64,5 @@ export function getThemedDefaultCacheManager<
     },
   };
 }
-export default DefaultStylesCache;
+
+export const DefaultCacheManager = createDefaultCacheManager<any, any, any>();
