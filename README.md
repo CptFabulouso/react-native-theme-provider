@@ -717,3 +717,4 @@ To modify the lib code and see changes immediately, do following changes in `./p
 ## TODO:
 
 - [ ] Allow to pass baseStyles to ThemeProvider and use them with `useStyle` hook.
+- [ ] Add tests to verify hook returns and caching
