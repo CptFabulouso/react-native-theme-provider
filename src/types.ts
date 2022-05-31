@@ -34,8 +34,20 @@ export type StyleCreator<
   P = undefined,
 > = (theme: ExtractThemes<T>, params: P) => StyleObj<S>;
 
-export type StyleCreatorCache<
+export type StyleCacheManager<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
+  S extends Styles<S>,
   P = undefined,
-> = (creator: StyleCreator<T, S, P>) => StyleCreator<T, S, P>;
+> = {
+  /**
+    modify your cache if theme changes
+  */
+  onThemeChange: (themeName: keyof T) => void;
+  /**
+    Called for each style creator - function inside createStyle or createUseStyle.
+    It receives the style creator and allows to return cached value instead of running the style creator again leading to styles recalculation.
+  */
+  onCacheStyleCreator: (
+    styleCreator: StyleCreator<T, S, P>,
+  ) => StyleCreator<T, S, P>;
+};

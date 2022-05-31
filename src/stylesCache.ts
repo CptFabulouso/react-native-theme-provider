@@ -35,4 +35,6 @@ const createStylesCache = <S extends Styles<S>>() => {
   };
 };
 
-export { createStylesCache, createKeyGenerator };
+const DefaultStylesCache = createStylesCache<any>();
+
+export default DefaultStylesCache;

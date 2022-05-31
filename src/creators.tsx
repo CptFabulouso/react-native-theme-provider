@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { ThemeProvider } from './ThemeContext';
 import { useStyle, useTheme, useThemeDispatch } from './hooks';
-import { createStylesCache } from './stylesCache';
+import DefaultStylesCache from './stylesCache';
 import {
   Styles,
   StyleCreator,
@@ -10,25 +10,31 @@ import {
   ThemeContextProps,
   Themes,
   ExtractThemeNames,
-  StyleCreatorCache,
+  // styleCacheManager,
+  StyleCacheManager,
 } from './types';
 
-const StylesCache = createStylesCache<any>();
-export function defaultStyleCreatorCache<
+function getDefaultCacheManager<
   T extends Themes,
   S extends Styles<S>,
   P,
->(styleCreator: StyleCreator<T, S, P>): StyleCreator<T, S, P> {
-  const id = StylesCache.generateId();
+>(): StyleCacheManager<T, S, P> {
+  return {
+    onThemeChange: () => DefaultStylesCache.resetAll(),
+    onCacheStyleCreator: (styleCreator: StyleCreator<T, S, P>) => {
+      // generate id for each style creator
+      const id = DefaultStylesCache.generateId();
 
-  return (t, params) => {
-    const cachedStyle = StylesCache.getStyle(id, params);
-    if (cachedStyle) {
-      return cachedStyle;
-    }
-    const style = styleCreator(t, params);
-    StylesCache.addStyle(id, style, params);
-    return style;
+      return (t, params) => {
+        const cachedStyle = DefaultStylesCache.getStyle(id, params);
+        if (cachedStyle) {
+          return cachedStyle;
+        }
+        const style = styleCreator(t, params);
+        DefaultStylesCache.addStyle(id, style, params);
+        return style;
+      };
+    },
   };
 }
 
@@ -46,17 +52,17 @@ export function createUseThemeDispatch<T extends Themes>() {
 
 export function createStyleCreator<T extends Themes, S extends Styles<S>>(
   styleCreator: StyleCreator<T, S>,
-  styleCreatorCache: StyleCreatorCache<T, S>,
+  styleCacheManager: StyleCacheManager<T, S>,
 ): StyleCreator<T, S>;
 export function createStyleCreator<T extends Themes, S extends Styles<S>, P>(
   styleCreator: StyleCreator<T, S, P>,
-  styleCreatorCache: StyleCreatorCache<T, S, P>,
+  styleCacheManager: StyleCacheManager<T, S, P>,
 ): StyleCreator<T, S, P>;
 export function createStyleCreator<T extends Themes, S extends Styles<S>, P>(
   styleCreator: StyleCreator<T, S, P>,
-  styleCreatorCache: StyleCreatorCache<T, S, P>,
+  styleCacheManager: StyleCacheManager<T, S, P>,
 ) {
-  return styleCreatorCache(styleCreator);
+  return styleCacheManager.onCacheStyleCreator(styleCreator);
 }
 
 export function createStyle<T extends Themes, S extends Styles<S>>(
@@ -90,45 +96,45 @@ export function createUseStyle<T extends Themes, S extends Styles<S>, P>(
 }
 
 export function createThemedStyleCreator<T extends Themes>(
-  styleCreatorCache: StyleCreatorCache<T, any, any> = defaultStyleCreatorCache,
+  styleCacheManager: StyleCacheManager<T, any, any>,
 ) {
   return function <S extends Styles<S>, P>(
     styleCreator: StyleCreator<T, S, P>,
   ) {
-    return createStyleCreator(styleCreator, styleCreatorCache);
+    return createStyleCreator(styleCreator, styleCacheManager);
   };
 }
 export function createThemedUseStyleCreator<T extends Themes>(
-  styleCreatorCache?: StyleCreatorCache<T, any, any>,
+  styleCacheManager: StyleCacheManager<T, any, any>,
 ): <S extends Styles<S>, P = undefined>(
   styleCreator: StyleCreator<T, S, P>,
 ) => (...params: P extends undefined ? [] : [params: P]) => StyleObj<S>;
 
 export function createThemedUseStyleCreator<T extends Themes>(
-  styleCreatorCache: StyleCreatorCache<T, any, any> = defaultStyleCreatorCache,
+  styleCacheManager: StyleCacheManager<T, any, any>,
 ) {
   return function <S extends Styles<S>, P>(
     styleCreator: StyleCreator<T, S, P>,
   ) {
-    return createUseStyle(createStyleCreator(styleCreator, styleCreatorCache));
+    return createUseStyle(createStyleCreator(styleCreator, styleCacheManager));
   };
 }
 
 type InitParams<T extends Themes> = {
   themes: T;
   initialTheme: ExtractThemeNames<T>;
-  onThemeChange?: () => void;
-  styleCreatorCache?: StyleCreatorCache<T, any, any>;
+  onThemeChange?: (nextThemeName: keyof T) => void;
+  styleCacheManager: StyleCacheManager<T, any, any>;
 };
 export function initThemeProvider<T extends Themes>({
   themes,
   initialTheme,
   onThemeChange,
-  styleCreatorCache,
+  styleCacheManager = getDefaultCacheManager<T, any, any>(),
 }: InitParams<T>) {
-  const handleThemeChange = () => {
-    onThemeChange && onThemeChange();
-    StylesCache.resetAll;
+  const handleThemeChange = (nextThemeName: keyof T) => {
+    onThemeChange && onThemeChange(nextThemeName);
+    styleCacheManager.onThemeChange(nextThemeName);
   };
 
   const ThemedThemedProvider = ({
@@ -152,8 +158,8 @@ export function initThemeProvider<T extends Themes>({
   return {
     ThemeProvider: ThemedThemedProvider,
     ThemedProviderComponent,
-    createUseStyle: createThemedUseStyleCreator<T>(styleCreatorCache),
-    createStyle: createThemedStyleCreator<T>(styleCreatorCache),
+    createUseStyle: createThemedUseStyleCreator<T>(styleCacheManager),
+    createStyle: createThemedStyleCreator<T>(styleCacheManager),
     useTheme: createUseTheme<T>(),
     useThemeDispatch: createUseThemeDispatch<T>(),
   };
