@@ -37,6 +37,7 @@
       - [onCacheStyleCreator](#oncachestylecreator-1)
   - [Recommendations](#recommendations)
   - [Example](#example)
+  - [TODO:](#todo)
 
 ## Installation
 
@@ -712,3 +713,7 @@ To modify the lib code and see changes immediately, do following changes in `./p
   "main": "src/index.ts", // <-- change to this
   "types": "src/index.ts", // <-- change to this
 ```
+
+## TODO:
+
+- [ ] Allow to pass baseStyles to ThemeProvider and use them with `useStyle` hook.
