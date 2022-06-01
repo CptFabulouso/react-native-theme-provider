@@ -6,11 +6,13 @@ import { createDefaultCacheManager } from './stylesCache';
 import {
   Styles,
   StyleCreator,
-  StyleObj,
   ThemeContextProps,
+  CombinedStyleObj,
+  BaseStyles,
   Themes,
   InitThemeProviderParams,
   StyleCacheManager,
+  BaseStyleCreator,
 } from './types';
 
 export function createThemedUseTheme<T extends Themes>() {
@@ -30,6 +32,14 @@ export function createThemedDefaultCacheManager<T extends Themes>() {
     return createDefaultCacheManager<T, S, P>();
   }
   return themedCacheManager();
+}
+
+export function createThemedBaseStyles<T extends Themes>() {
+  return function <BS extends Styles<BS>>(
+    baseStylesCreator: BaseStyleCreator<T, BS>,
+  ) {
+    return baseStylesCreator;
+  };
 }
 
 export function createStyleCreator<T extends Themes, S extends Styles<S>>(
@@ -64,16 +74,22 @@ export function createStyle<T extends Themes, S extends Styles<S>, P>(
 export function createUseStyle<
   T extends Themes,
   S extends Styles<S>,
+  BS extends BaseStyles<BS>,
   P = undefined,
 >(
   styleCreator: StyleCreator<T, S, P>,
-): (...params: P extends undefined ? [] : [params: P]) => StyleObj<S>;
+): (
+  ...params: P extends undefined ? [] : [params: P]
+) => CombinedStyleObj<S, BS>;
 
-export function createUseStyle<T extends Themes, S extends Styles<S>, P>(
-  styleCreator: StyleCreator<T, S, P>,
-) {
+export function createUseStyle<
+  T extends Themes,
+  S extends Styles<S>,
+  BS extends BaseStyles<BS>,
+  P,
+>(styleCreator: StyleCreator<T, S, P>) {
   return (params: P) => {
-    return useStyle<T, S, P>(styleCreator, params);
+    return useStyle<T, S, BS, P>(styleCreator, params);
   };
 }
 
@@ -86,35 +102,45 @@ export function createThemedStyleCreator<T extends Themes>(
     return createStyleCreator(styleCreator, styleCacheManager);
   };
 }
-export function createThemedUseStyleCreator<T extends Themes>(
+export function createThemedUseStyleCreator<
+  T extends Themes,
+  BS extends BaseStyles<BS>,
+>(
   styleCacheManager: StyleCacheManager<T, any, any>,
 ): <S extends Styles<S>, P = undefined>(
   styleCreator: StyleCreator<T, S, P>,
-) => (...params: P extends undefined ? [] : [params: P]) => StyleObj<S>;
+) => (
+  ...params: P extends undefined ? [] : [params: P]
+) => CombinedStyleObj<S, BS>;
 
-export function createThemedUseStyleCreator<T extends Themes>(
-  styleCacheManager: StyleCacheManager<T, any, any>,
-) {
+export function createThemedUseStyleCreator<
+  T extends Themes,
+  BS extends BaseStyles<BS>,
+>(styleCacheManager: StyleCacheManager<T, any, any>) {
   return function <S extends Styles<S>, P>(
     styleCreator: StyleCreator<T, S, P>,
   ) {
-    return createUseStyle(createStyleCreator(styleCreator, styleCacheManager));
+    return createUseStyle<T, S, BS, P>(
+      createStyleCreator(styleCreator, styleCacheManager),
+    );
   };
 }
 
-export function initThemeProvider<T extends Themes>({
+export function initThemeProvider<T extends Themes, BS extends Styles<BS>>({
   themes,
   initialTheme,
   onThemeChange,
   styleCacheManager = createThemedDefaultCacheManager<T>(),
-}: InitThemeProviderParams<T>) {
+  baseStylesCreator,
+}: InitThemeProviderParams<T, BS>) {
   const ThemedThemedProvider = ({
     children,
     onThemeChange: propsOnThemeChange,
     initialTheme: propsInitialTheme,
+    baseStylesCreator: propsBaseStylesCreator,
   }: {
     children: React.ReactNode;
-  } & Partial<ThemeContextProps<T>>) => {
+  } & Partial<ThemeContextProps<T, BS>>) => {
     React.useEffect(() => {
       styleCacheManager.onProviderMount && styleCacheManager.onProviderMount();
     }, []);
@@ -133,18 +159,19 @@ export function initThemeProvider<T extends Themes>({
         initialTheme={propsInitialTheme ?? initialTheme}
         themes={themes}
         onThemeChange={handleThemeChange}
+        baseStylesCreator={propsBaseStylesCreator ?? baseStylesCreator}
       >
         {children}
       </ThemeProvider>
     );
   };
-  const ThemedProviderComponent: React.ComponentType<ThemeContextProps<T>> =
+  const ThemedProviderComponent: React.ComponentType<ThemeContextProps<T, BS>> =
     ThemeProvider;
 
   return {
     ThemeProvider: ThemedThemedProvider,
     ThemedProviderComponent,
-    createUseStyle: createThemedUseStyleCreator<T>(styleCacheManager),
+    createUseStyle: createThemedUseStyleCreator<T, BS>(styleCacheManager),
     createStyle: createThemedStyleCreator<T>(styleCacheManager),
     useTheme: createThemedUseTheme<T>(),
     useThemeDispatch: createThemedUseThemeDispatch<T>(),

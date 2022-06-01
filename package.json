@@ -2,8 +2,8 @@
   "name": "@pavelgric/react-native-theme-provider",
   "version": "0.1.0",
   "description": "Simple theme provider for React Native",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write src/**/*.{ts,tsx}",

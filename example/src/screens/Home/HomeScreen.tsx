@@ -3,11 +3,10 @@ import { ScrollView } from 'react-native';
 
 import useStyle from './styles';
 import { Button, ClassText, Text } from '@components';
-import { useTheme, useThemeDispatch, useDefaultStyles } from '@themes';
+import { useTheme, useThemeDispatch } from '@themes';
 
 const HomeScreen = () => {
   const styles = useStyle();
-  const ds = useDefaultStyles();
   const { selectedTheme } = useTheme();
   const { setTheme } = useThemeDispatch();
   const [val, updateVal] = useState(1);
@@ -22,10 +21,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={ds.pageFlexCenter}
-    >
+    <ScrollView style={styles.container} contentContainerStyle={styles.bs.flex}>
       <Text type="h1">h1</Text>
       <Text type="h2">h2</Text>
       <Text type="h3">h3</Text>

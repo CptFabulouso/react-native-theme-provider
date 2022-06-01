@@ -10,29 +10,46 @@ export type NamedStyles<T> = {
 };
 
 export type Styles<S> = NamedStyles<S> | NamedStyles<any>;
+export type BaseStyles<S> = NamedStyles<S> | NamedStyles<any> | undefined;
 export type StyleObj<S extends NamedStyles<S> | NamedStyles<any>> = S;
+export type BaseStyleObj<BS extends BaseStyles<BS>> =
+  BS extends NamedStyles<any> ? StyleObj<BS> : undefined;
+export type CombinedStyleObj<
+  S extends Styles<S>,
+  BS extends BaseStyles<BS>,
+> = BS extends undefined ? S : S & { bs: BS };
 
 export type ThemeContextValue<T extends Themes> = {
   selectedTheme: ExtractThemeNames<T>;
   themes: T;
   t: ExtractThemes<T>;
 };
+export type ThemeBaseStylesContextValue<BS extends BaseStyles<BS>> = {
+  baseStyles: BaseStyleObj<BS>;
+};
 export type ThemeDispatchContextValue<T extends Themes> = {
   setTheme: (t: ExtractThemeNames<T>) => void;
 };
 
-export type ThemeContextProps<T extends Themes> = {
+export type ThemeContextProps<T extends Themes, BS extends Styles<BS>> = {
   children: React.ReactNode;
   initialTheme: ExtractThemeNames<T>;
   themes: T;
   onThemeChange?: (nextThemeName: ExtractThemeNames<T>) => void;
+  baseStylesCreator?: BaseStyleCreator<T, BS>;
 };
 
 export type StyleCreator<
   T extends Themes,
-  S extends NamedStyles<S> | NamedStyles<any>,
+  S extends Styles<S>,
   P = undefined,
 > = (theme: ExtractThemes<T>, params: P) => StyleObj<S>;
+/*
+  `BS extends Styles<BS>` is correct here. The creator has to return styles, never undefined
+ */
+export type BaseStyleCreator<T extends Themes, BS extends Styles<BS>> = (
+  theme: ExtractThemes<T>,
+) => StyleObj<BS>;
 
 export type StyleCacheManager<
   T extends Themes,
@@ -56,9 +73,10 @@ export type StyleCacheManager<
   ) => StyleCreator<T, S, P>;
 };
 
-export type InitThemeProviderParams<T extends Themes> = {
+export type InitThemeProviderParams<T extends Themes, BS extends Styles<BS>> = {
   themes: T;
   initialTheme: ExtractThemeNames<T>;
   onThemeChange?: (nextThemeName: keyof T) => void;
   styleCacheManager?: StyleCacheManager<T, any, any>;
+  baseStylesCreator?: BaseStyleCreator<T, BS>;
 };
