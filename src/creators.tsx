@@ -34,7 +34,7 @@ export function createThemedDefaultCacheManager<T extends Themes>() {
   return themedCacheManager();
 }
 
-export function createThemedBaseStyles<T extends Themes>() {
+export function createThemedBaseStylesCreator<T extends Themes>() {
   return function <BS extends Styles<BS>>(
     baseStylesCreator: BaseStyleCreator<T, BS>,
   ) {
@@ -93,18 +93,40 @@ export function createUseStyle<
   };
 }
 
+export function createThemedUseStyle<
+  T extends Themes,
+  BS extends BaseStyles<BS> = undefined,
+>() {
+  return function <S extends Styles<S>>(styleCreator: StyleCreator<T, S>) {
+    return useStyle<T, S, BS>(styleCreator, undefined);
+  };
+}
+
+export function createThemedUseStyleWithParams<
+  T extends Themes,
+  BS extends BaseStyles<BS> = undefined,
+>() {
+  return function <S extends Styles<S>, P>(
+    styleCreator: StyleCreator<T, S, P>,
+    params: P,
+  ) {
+    return useStyle<T, S, BS, P>(styleCreator, params);
+  };
+}
+
 export function createThemedStyleCreator<T extends Themes>(
   styleCacheManager: StyleCacheManager<T, any, any>,
 ) {
   return function <S extends Styles<S>, P>(
     styleCreator: StyleCreator<T, S, P>,
   ) {
-    return createStyleCreator(styleCreator, styleCacheManager);
+    return createStyleCreator<T, S, P>(styleCreator, styleCacheManager);
   };
 }
+
 export function createThemedUseStyleCreator<
   T extends Themes,
-  BS extends BaseStyles<BS>,
+  BS extends BaseStyles<BS> = undefined,
 >(
   styleCacheManager: StyleCacheManager<T, any, any>,
 ): <S extends Styles<S>, P = undefined>(
@@ -126,7 +148,10 @@ export function createThemedUseStyleCreator<
   };
 }
 
-export function initThemeProvider<T extends Themes, BS extends Styles<BS>>({
+export function initThemeProvider<
+  T extends Themes,
+  BS extends Styles<BS> = undefined,
+>({
   themes,
   initialTheme,
   onThemeChange,
@@ -175,5 +200,7 @@ export function initThemeProvider<T extends Themes, BS extends Styles<BS>>({
     createStyle: createThemedStyleCreator<T>(styleCacheManager),
     useTheme: createThemedUseTheme<T>(),
     useThemeDispatch: createThemedUseThemeDispatch<T>(),
+    useStyle: createThemedUseStyle<T, BS>(),
+    useStyleWithParams: createThemedUseStyleWithParams<T, BS>(),
   };
 }

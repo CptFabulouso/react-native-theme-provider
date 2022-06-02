@@ -8,6 +8,5 @@ export {
   useThemeDispatch,
   ThemeProvider,
 } from './Themes';
-export type { BaseStyles } from './Themes';
 
 export type { Theme, Typography };

@@ -1,15 +1,10 @@
 import * as React from 'react';
 
-import { createStyle, createUseStyle, initThemeProvider } from '../creators';
-import { useStyle } from '../hooks';
+import { createUseStyle, createStyle } from '../creators';
 import { withCreateStyle, withUseStyle } from '../wrappers';
+import { checkStyle } from './common';
 
-const themes = {
-  light: {
-    blue: 'blue',
-  },
-};
-
+/* style creators */
 const styleCreator = createStyle((t) => ({
   container: {
     backgroundColor: t.blue,
@@ -24,41 +19,7 @@ const styleCreatorParams = createStyle((t, { val }: { val: string }) => ({
   },
 }));
 
-const { createStyle: themedCreateStyle, createUseStyle: themedCreateUseStyle } =
-  initThemeProvider({ themes, initialTheme: 'light' });
-
-const themedStyleCreator = themedCreateStyle((t) => ({
-  container: {
-    backgroundColor: t.blue,
-    borderBottomColor: 'blue',
-  },
-}));
-
-const themedStyleCreatorParams = themedCreateStyle(
-  (t, { val }: { val: string }) => ({
-    container: {
-      backgroundColor: t.blue,
-      borderBottomColor: val,
-    },
-  }),
-);
-
-const themedUseStyle = themedCreateUseStyle((t) => ({
-  container: {
-    backgroundColor: t.blue,
-    borderBottomColor: 'blue',
-  },
-}));
-
-const themedUseStyleParams = themedCreateUseStyle(
-  (t, { val }: { val: string }) => ({
-    container: {
-      backgroundColor: t.blue,
-      borderBottomColor: val,
-    },
-  }),
-);
-
+/* use style creators */
 const useStyleTest = createUseStyle((t) => ({
   container: {
     backgroundColor: t.blue,
@@ -73,47 +34,7 @@ const useStyleTestParams = createUseStyle((t, { val }: { val: string }) => ({
   },
 }));
 
-const checkStyle = (
-  styles: Array<{
-    container: {
-      backgroundColor: string;
-      borderBottomColor: string;
-    };
-  }>,
-) => {
-  return styles;
-};
-
-export const Foo = () => {
-  const styles = useStyle(styleCreator);
-  // @ts-expect-error
-  const stylesParams = useStyle(styleCreatorParams);
-  const themedStyles = useStyle(themedStyleCreator);
-  // @ts-expect-error
-  const themedStylesParams = useStyle(themedStyleCreatorParams);
-  const stylesUse = useStyleTest();
-  // @ts-expect-error
-  const stylesUseParams = useStyleTestParams();
-  const themedStylesUse = themedUseStyle();
-  // @ts-expect-error
-  const themedStylesUseParams = themedUseStyleParams();
-
-  checkStyle([
-    styles,
-    stylesParams,
-    themedStyles,
-    themedStylesParams,
-    stylesUse,
-    stylesUseParams,
-    themedStylesUse,
-    themedStylesUseParams,
-  ]);
-};
-
-/* WRAPPERS */
-
 /* withUseStyle */
-
 type ClassCompWithUseStyleProps = {
   styles: ReturnType<typeof useStyleTest>;
   val: string;
@@ -121,7 +42,7 @@ type ClassCompWithUseStyleProps = {
 export class ClassCompUseStyle extends React.Component<ClassCompWithUseStyleProps> {
   render() {
     const { styles } = this.props;
-    checkStyle([styles]);
+    checkStyle(styles);
     return null;
   }
 }
@@ -153,7 +74,7 @@ type ClassCompWithCreateStyleProps = {
 export class ClassCompCreateStyle extends React.Component<ClassCompWithCreateStyleProps> {
   render() {
     const { styles } = this.props;
-    checkStyle([styles]);
+    checkStyle(styles);
     return null;
   }
 }

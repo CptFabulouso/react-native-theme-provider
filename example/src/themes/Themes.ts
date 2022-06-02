@@ -1,7 +1,7 @@
 import {
   useStyle,
   initThemeProvider,
-  createThemedBaseStyles,
+  createThemedBaseStylesCreator,
 } from '@pavelgric/react-native-theme-provider';
 
 import darkTheme from './variants/darkTheme';
@@ -9,7 +9,6 @@ import lightTheme from './variants/lightTheme';
 
 export { useStyle };
 
-export type BaseStyles = ReturnType<typeof baseStylesCreator>;
 export type Themes = typeof themes;
 
 export const themes = {
@@ -17,20 +16,23 @@ export const themes = {
   dark: darkTheme,
 };
 
-export const baseStylesCreator = createThemedBaseStyles<Themes>()((t) => ({
-  page: {
-    flex: 1,
-    backgroundColor: t.colors.surface,
-  },
-  flex: {
-    flex: 1,
-  },
-  flexCenter: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-}));
+export const baseStylesCreator = createThemedBaseStylesCreator<Themes>()(
+  (t) => ({
+    page: {
+      flex: 1,
+      backgroundColor: t.colors.surface,
+    },
+    flex: {
+      flex: 1,
+    },
+    flexCenter: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: t.colors.surface,
+    },
+  }),
+);
 
 export const {
   createUseStyle,
