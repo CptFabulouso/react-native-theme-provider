@@ -11,6 +11,7 @@
     "compile": "rm -rf lib && tsc -p ./tsconfig.prod.json",
     "prepare": "husky install",
     "publish": "npm publish --access public",
+    "publishNext": "npm publish --access public --tag next",
     "tsc": "tsc --noEmit"
   },
   "repository": {
