@@ -6,33 +6,34 @@ import {
 
 import darkTheme from './variants/darkTheme';
 import lightTheme from './variants/lightTheme';
+import { ThemeParams } from './variants/themeCreator';
 
 export { useStyle };
 
 export type Themes = typeof themes;
 
-export const themes = {
-  light: lightTheme,
-  dark: darkTheme,
-};
+export const themes = (params: ThemeParams) => ({
+  light: lightTheme(params),
+  dark: darkTheme(params),
+});
 
-export const baseStylesCreator = createThemedBaseStylesCreator<Themes>()(
-  (t) => ({
-    page: {
-      flex: 1,
-      backgroundColor: t.colors.surface,
-    },
-    flex: {
-      flex: 1,
-    },
-    flexCenter: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: t.colors.surface,
-    },
-  }),
-);
+export const baseStylesCreator = createThemedBaseStylesCreator<
+  ReturnType<Themes>
+>()((t) => ({
+  page: {
+    flex: 1,
+    backgroundColor: t.colors.surface,
+  },
+  flex: {
+    flex: 1,
+  },
+  flexCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: t.colors.surface,
+  },
+}));
 
 export const {
   createUseStyle,
@@ -44,4 +45,7 @@ export const {
   themes,
   initialTheme: 'light',
   baseStylesCreator,
+  initialThemeParams: {
+    fontSizeMultiplier: 1,
+  },
 });

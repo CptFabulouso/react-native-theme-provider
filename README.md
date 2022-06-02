@@ -8,12 +8,14 @@
       - [Wrap your app with exported ThemeProvider](#wrap-your-app-with-exported-themeprovider)
       - [Create style for component](#create-style-for-component)
       - [Change or access theme](#change-or-access-theme)
+      - [Change or access theme params](#change-or-access-theme-params)
     - [Usage without initThemeProvider](#usage-without-initthemeprovider)
       - [Wrap your app with ThemeProvider](#wrap-your-app-with-themeprovider)
     - [Usage without any helpers](#usage-without-any-helpers)
   - [Passing params to style creator](#passing-params-to-style-creator)
     - [Passing params examples](#passing-params-examples)
   - [Passing and accessing default styles](#passing-and-accessing-default-styles)
+  - [Passing theme params](#passing-theme-params)
   - [Exported functions](#exported-functions)
     - [`initThemeProvider`](#initthemeprovider)
     - [`createStyle`](#createstyle)
@@ -121,6 +123,39 @@ export const {
 
 // useStyle does not depend on Theme, this is just to make it also accessible from here. But you'll probably not gonna use this anyway
 export { useStyle };
+```
+
+instead of passing themes as an object, you can also pass a function, which will receive any params you specify.
+This may be useful if you support changing font size or spacing based on phone size, orientation etc.
+These params are not propagated to style creators. If you want to pass params there, use the available solutions.
+
+```ts
+const themes = (params: { fontSizeMultiplier: number}) => {
+  const fontSizes = {
+      // other font sizes
+      medium: fontSizeMultiplier * 15
+  };
+
+  return {
+    light: {
+      // other things
+      fontSizes,
+    },
+    dark: {
+      // other things
+      fontSizes,
+    }
+  }
+};
+
+// will call themes as a function with initialThemeParams
+const result = initThemeProvider({ 
+  themes, 
+  initialThemeParams: {
+    fontSizeMultiplier: 1,
+  }, 
+  initialTheme: 'red'
+});
 ```
 
 #### Wrap your app with exported ThemeProvider
@@ -233,6 +268,46 @@ export default SomeComponent = () => {
           }}
         >
           <Text>Change theme</Text>
+        </TouchableOpacity>
+    </View>
+  );
+};
+```
+
+#### Change or access theme params
+
+```tsx
+// SomeComponent.tsx
+
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import {
+  useThemeDispatch,
+  useTheme,
+} from './path/to/themes.ts';
+
+export default SomeComponent = () => {
+  // get current themeParams
+  const { themeParams } = useTheme();
+  // to change themeParams
+  const { setThemeParams } = useThemeDispatch();
+
+  return (
+    <View>
+      <Text>{`current font multiplier is ${themeParams.fontSizeMultiplier}`}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setThemeParams(themeParams.fontSizeMultiplier + 1);
+          }}
+        >
+          <Text>make font larger</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setThemeParams(themeParams.fontSizeMultiplier - 1);
+          }}
+        >
+          <Text>make font smaller</Text>
         </TouchableOpacity>
     </View>
   );
@@ -480,6 +555,10 @@ export default InnerComponent = () => {
   );
 };
 ```
+
+## Passing theme params
+
+You can pass custom params to your themes, 
 
 ## Exported functions
 

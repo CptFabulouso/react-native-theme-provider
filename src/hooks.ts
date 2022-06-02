@@ -47,7 +47,7 @@ export function useStyle<
   P,
 >(styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>, params?: P) {
   const { baseStyles } = useThemeBaseStyles<BS>();
-  const { t } = useTheme<T>();
+  const { t } = useTheme<T, any>();
 
   const styles = React.useMemo(() => {
     const createdStyles = styleCreator(t, params) as
@@ -62,7 +62,7 @@ export function useStyle<
   return styles;
 }
 
-export function useTheme<T extends Themes>(): ThemeContextValue<T> {
+export function useTheme<T extends Themes, P>(): ThemeContextValue<T, P> {
   const context = React.useContext(ThemeContext);
   if (context === null) {
     throw new Error('useTheme must be used within a ThemeProvider');
@@ -83,7 +83,8 @@ export function useThemeBaseStyles<
 
 export function useThemeDispatch<
   T extends Themes,
->(): ThemeDispatchContextValue<T> {
+  P,
+>(): ThemeDispatchContextValue<T, P> {
   const context = React.useContext(ThemeDispatchContext);
   if (context === null) {
     throw new Error('useThemeDispatch must be used within a ThemeProvider');

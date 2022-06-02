@@ -7,13 +7,19 @@ import { useTheme, useThemeDispatch } from '@themes';
 
 const HomeScreen = () => {
   const styles = useStyle();
-  const { selectedTheme } = useTheme();
-  const { setTheme } = useThemeDispatch();
+  const { selectedTheme, themeParams } = useTheme();
+  const { setTheme, setParams } = useThemeDispatch();
   const [val, updateVal] = useState(1);
 
   const changeTheme = () => {
     const nextTheme = selectedTheme === 'light' ? 'dark' : 'light';
     setTheme(nextTheme);
+  };
+
+  const changeFontMultiplier = () => {
+    setParams({
+      fontSizeMultiplier: themeParams.fontSizeMultiplier === 1 ? 1.3 : 1,
+    });
   };
 
   const updateScreen = () => {
@@ -39,6 +45,10 @@ const HomeScreen = () => {
       <ClassText type="caption">caption</ClassText>
       <ClassText type="overline">overline</ClassText>
       <Button label="change theme" onPress={changeTheme} />
+      <Button
+        label="change fontSizeMultiplier"
+        onPress={changeFontMultiplier}
+      />
       <Button label="update screen" onPress={updateScreen} />
       <Text type="h5">{`update cycle: ${val}`}</Text>
     </ScrollView>

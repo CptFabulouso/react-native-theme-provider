@@ -13,17 +13,25 @@ import {
   InitThemeProviderParams,
   StyleCacheManager,
   BaseStyleCreator,
+  ThemeContextValue,
+  ThemeDispatchContextValue,
 } from './types';
 
-export function createThemedUseTheme<T extends Themes>() {
+export function createThemedUseTheme<
+  T extends Themes,
+  P,
+>(): () => ThemeContextValue<T, P> {
   return function () {
-    return useTheme<T>();
+    return useTheme<T, P>();
   };
 }
 
-export function createThemedUseThemeDispatch<T extends Themes>() {
+export function createThemedUseThemeDispatch<
+  T extends Themes,
+  P,
+>(): () => ThemeDispatchContextValue<T, P> {
   return function () {
-    return useThemeDispatch<T>();
+    return useThemeDispatch<T, P>();
   };
 }
 
@@ -151,32 +159,39 @@ export function createThemedUseStyleCreator<
 export function initThemeProvider<
   T extends Themes,
   BS extends Styles<BS> = undefined,
+  P = undefined,
 >({
   themes,
   initialTheme,
   onThemeChange,
+  onThemeParamsChange,
   styleCacheManager = createThemedDefaultCacheManager<T>(),
   baseStylesCreator,
-}: InitThemeProviderParams<T, BS>) {
+  initialThemeParams,
+}: InitThemeProviderParams<T, BS, P>) {
   const ThemedThemedProvider = ({
     children,
     onThemeChange: propsOnThemeChange,
+    onThemeParamsChange: propsOnThemeParamsChange,
     initialTheme: propsInitialTheme,
     baseStylesCreator: propsBaseStylesCreator,
+    initialThemeParams: propsInitialThemeParams,
   }: {
     children: React.ReactNode;
-  } & Partial<ThemeContextProps<T, BS>>) => {
-    React.useEffect(() => {
-      styleCacheManager.onProviderMount && styleCacheManager.onProviderMount();
-    }, []);
-
+  } & Partial<ThemeContextProps<T, BS, P>>) => {
     const handleThemeChange = React.useCallback(
       (nextThemeName: keyof T) => {
         propsOnThemeChange && propsOnThemeChange(nextThemeName);
         onThemeChange && onThemeChange(nextThemeName);
-        styleCacheManager.onThemeChange(nextThemeName);
       },
       [propsOnThemeChange],
+    );
+    const handleThemeParamsChange = React.useCallback(
+      (nextParams: P) => {
+        propsOnThemeParamsChange && propsOnThemeParamsChange(nextParams);
+        onThemeParamsChange && onThemeParamsChange(nextParams);
+      },
+      [propsOnThemeParamsChange],
     );
 
     return (
@@ -184,22 +199,25 @@ export function initThemeProvider<
         initialTheme={propsInitialTheme ?? initialTheme}
         themes={themes}
         onThemeChange={handleThemeChange}
+        onThemeParamsChange={handleThemeParamsChange}
         baseStylesCreator={propsBaseStylesCreator ?? baseStylesCreator}
+        initialThemeParams={propsInitialThemeParams ?? initialThemeParams}
       >
         {children}
       </ThemeProvider>
     );
   };
-  const ThemedProviderComponent: React.ComponentType<ThemeContextProps<T, BS>> =
-    ThemeProvider;
+  const ThemedProviderComponent: React.ComponentType<
+    ThemeContextProps<T, BS, P>
+  > = ThemeProvider;
 
   return {
     ThemeProvider: ThemedThemedProvider,
     ThemedProviderComponent,
     createUseStyle: createThemedUseStyleCreator<T, BS>(styleCacheManager),
     createStyle: createThemedStyleCreator<T>(styleCacheManager),
-    useTheme: createThemedUseTheme<T>(),
-    useThemeDispatch: createThemedUseThemeDispatch<T>(),
+    useTheme: createThemedUseTheme<T, P>(),
+    useThemeDispatch: createThemedUseThemeDispatch<T, P>(),
     useStyle: createThemedUseStyle<T, BS>(),
     useStyleWithParams: createThemedUseStyleWithParams<T, BS>(),
   };

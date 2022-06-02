@@ -19,25 +19,35 @@ export type CombinedStyleObj<
   BS extends BaseStyles<BS>,
 > = BS extends undefined ? S : S & { bs: BS };
 
-export type ThemeContextValue<T extends Themes> = {
+export type ThemeContextValue<T extends Themes, P> = {
   selectedTheme: ExtractThemeNames<T>;
   themes: T;
   t: ExtractThemes<T>;
+  themeParams: P;
 };
 export type ThemeBaseStylesContextValue<BS extends BaseStyles<BS>> = {
   baseStyles: BaseStyleObj<BS>;
 };
-export type ThemeDispatchContextValue<T extends Themes> = {
+export type ThemeDispatchContextValue<T extends Themes, P> = {
   setTheme: (t: ExtractThemeNames<T>) => void;
+  setParams: (p: P) => void;
 };
-
-export type ThemeContextProps<T extends Themes, BS extends Styles<BS>> = {
-  children: React.ReactNode;
+export type ThemeContextProps<T extends Themes, BS extends Styles<BS>, P> = {
+  initialThemeParams?: P;
+  themes: T | ((params: P) => T);
   initialTheme: ExtractThemeNames<T>;
-  themes: T;
+  onThemeParamsChange?: (nextParams: P) => void;
   onThemeChange?: (nextThemeName: ExtractThemeNames<T>) => void;
   baseStylesCreator?: BaseStyleCreator<T, BS>;
+  children: React.ReactNode;
+  styleCacheManager?: StyleCacheManager<T, any, any>;
 };
+
+export type InitThemeProviderParams<
+  T extends Themes,
+  BS extends Styles<BS>,
+  P = undefined,
+> = Omit<ThemeContextProps<T, BS, P>, 'children'>;
 
 export type StyleCreator<
   T extends Themes,
@@ -65,20 +75,16 @@ export type StyleCacheManager<
   */
   onThemeChange: (themeName: keyof T) => void;
   /**
+    Modify your cache if theme params change
+  */
+  onThemeParamsChange: (themeName: keyof T) => void;
+  /**
     Called for each style creator - function inside createStyle or createUseStyle.
     It receives the style creator and allows to return cached value instead of running the style creator again leading to styles recalculation.
   */
   onCacheStyleCreator: (
     styleCreator: StyleCreator<T, S, P>,
   ) => StyleCreator<T, S, P>;
-};
-
-export type InitThemeProviderParams<T extends Themes, BS extends Styles<BS>> = {
-  themes: T;
-  initialTheme: ExtractThemeNames<T>;
-  onThemeChange?: (nextThemeName: keyof T) => void;
-  styleCacheManager?: StyleCacheManager<T, any, any>;
-  baseStylesCreator?: BaseStyleCreator<T, BS>;
 };
 
 // export type WithUseStyleProps<

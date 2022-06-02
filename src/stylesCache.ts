@@ -48,6 +48,7 @@ export function createDefaultCacheManager<
     */
     onProviderMount: () => DefaultStylesCache.resetAll(),
     onThemeChange: () => DefaultStylesCache.resetAll(),
+    onThemeParamsChange: () => DefaultStylesCache.resetAll(),
     onCacheStyleCreator: (styleCreator) => {
       // generate id for each style creator
       const id = DefaultStylesCache.generateId();
