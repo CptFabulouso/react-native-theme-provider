@@ -398,6 +398,11 @@ export default InnerComponent = () => {
 
 ## Passing and accessing default styles
 
+You can create and access some basic styles like `{ flex: 1 }`, so you don't have to recreate them everywhere over and over again.
+These styles will be passed to you by the `const styles = useStyle()` function and will be under `styles.bs` key. The `bs` key is reserved and you can't overwrite it in your style creator, meaning you can't have there some `bs: { flex: 1}`. 
+This applies only if you pass the `baseStylesCreator` to the `initThemeProvider` or `ThemeProvider`, it's not required.
+The `bs` object is singleton and is the same in all `styles` objects from `useStyle`.
+
 First create base styles
 
 ```ts
@@ -423,7 +428,7 @@ export const baseStylesCreator = createThemedBaseStylesCreator<typeof themes>()(
 }));
 ```
 
-Then passed them either to initThemeProvider or ThemeProvider directly
+Pass them either to `initThemeProvider` or `ThemeProvider` directly
 
 ```tsx
 export const {
@@ -444,6 +449,34 @@ export default App = () => {
     <ThemeProvider baseStylesCreator initialTheme={colorScheme === 'dark' : 'red' : 'blue'}>
       <InnerComponent />
     </ThemeProvider>
+  );
+};
+```
+
+Access them in your component
+
+```tsx
+// InnerComponent.tsx
+
+import React from 'react';
+import { View } from 'react-native';
+import { createUseStyle } from './path/to/themes.ts';
+
+// createUseStyle basically returns (fn) => useStyle(fn)
+const useStyle = createUseStyle((t) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+  },
+}));
+
+export default InnerComponent = () => {
+  const styles = useStyle();
+
+  return (
+    /* under bs key are styles created by baseStylesCreator */
+    <View style={styles.bs.page}>
+      <View style={styles.container} />
+    </View>
   );
 };
 ```
@@ -500,7 +533,6 @@ export const {
 | initialTheme | String | Yes | Name of one of the theme |
 | onThemeChange | Function | No | Called when theme changes |
 | styleCacheManager | Object | No | Object with functions to handle style caching. By default uses DefaultCacheManager |
-
 
 ### `createStyle`
 
