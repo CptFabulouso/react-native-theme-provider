@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { NamedStyles, StyleCreator, StyleObj } from './types';
-export declare type WithStylesProps<S extends NamedStyles<S> | NamedStyles<any>> = {
-    styles: StyleObj<S>;
+import { Styles, StyleCreator, CombinedStyleObj } from './types';
+export declare type WithStylesProps = {
+    styles: CombinedStyleObj<any, any>;
 };
-declare type InjectedProps<S> = WithStylesProps<S>;
-export declare function withUseStyle<T extends InjectedProps<S>, S extends NamedStyles<S> | NamedStyles<any>>(WrappedComponent: React.ComponentType<T>, useStyleParam: () => StyleObj<S>): React.FC<Omit<T, keyof InjectedProps<S>>>;
-export declare function withUseStyle<T extends InjectedProps<S>, S extends NamedStyles<S> | NamedStyles<any>, P>(WrappedComponent: React.ComponentType<T>, useStyleParam: (params: P) => StyleObj<S>, mapPropsToParams: (props: Omit<T, keyof InjectedProps<S>>) => P): React.FC<Omit<T, keyof InjectedProps<S>>>;
-export declare function withCreateStyle<T extends InjectedProps<S>, S extends NamedStyles<S> | NamedStyles<any>>(WrappedComponent: React.ComponentType<T>, styleCreator: StyleCreator<any, S, undefined>): React.FC<Omit<T, keyof InjectedProps<S>>>;
-export declare function withCreateStyle<T extends InjectedProps<S>, S extends NamedStyles<S> | NamedStyles<any>, P>(WrappedComponent: React.ComponentType<T>, styleCreator: StyleCreator<any, S, P>, mapPropsToParams: (props: Omit<T, keyof InjectedProps<S>>) => P, key?: string | number): React.FC<Omit<T, keyof InjectedProps<S>>>;
+declare type InjectedProps = WithStylesProps;
+export declare function withUseStyle<TProps, T extends InjectedProps>(WrappedComponent: React.ComponentType<TProps>, useStyleParam: () => CombinedStyleObj<any, any>): React.FC<Omit<TProps, keyof T>>;
+export declare function withUseStyle<TProps, T extends InjectedProps, P>(WrappedComponent: React.ComponentType<TProps>, useStyleParam: (params: P) => CombinedStyleObj<any, any>, mapPropsToParams: (props: Omit<TProps, keyof T>) => P): React.FC<Omit<TProps, keyof T>>;
+export declare function withCreateStyle<TProps, S extends Styles<S>, T extends InjectedProps>(WrappedComponent: React.ComponentType<TProps>, styleCreator: StyleCreator<any, S, undefined>): React.FC<Omit<T, keyof InjectedProps>>;
+export declare function withCreateStyle<TProps, S extends Styles<S>, T extends InjectedProps, P>(WrappedComponent: React.ComponentType<TProps>, styleCreator: StyleCreator<any, S, P>, mapPropsToParams: (props: Omit<TProps, keyof T>) => P): React.FC<Omit<T, keyof T>>;
+export declare function createStylesWithProps<S extends Styles<S>, P>(fn: (props: P) => S): (props: P) => S;
 export {};

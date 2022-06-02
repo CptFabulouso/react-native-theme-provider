@@ -1,10 +1,3 @@
-import { NamedStyles } from './types';
-declare const StylesCache: {
-    addStyle: (key: string | number, style: NamedStyles<any> | NamedStyles<unknown>) => void;
-    getStyle: (key: string | number) => NamedStyles<any> | NamedStyles<unknown> | undefined;
-    resetAll: () => void;
-};
-declare const KeyGenerator: {
-    getNextKey: () => number;
-};
-export { StylesCache, KeyGenerator };
+import { Styles, Themes, StyleCacheManager } from './types';
+export declare function createDefaultCacheManager<T extends Themes, S extends Styles<S>, P>(): StyleCacheManager<T, S, P>;
+export declare const DefaultCacheManager: StyleCacheManager<any, any, any>;
