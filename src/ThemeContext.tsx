@@ -76,7 +76,7 @@ export function ThemeProvider<T extends Themes, BS extends Styles<BS>, P>({
     >
       <ThemeBaseStylesContext.Provider value={{ baseStyles }}>
         <ThemeDispatchContext.Provider
-          value={{ setTheme: changeTheme, setParams: changeThemeParams }}
+          value={{ setTheme: changeTheme, setThemeParams: changeThemeParams }}
         >
           {children}
         </ThemeDispatchContext.Provider>

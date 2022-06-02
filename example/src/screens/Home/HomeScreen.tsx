@@ -8,7 +8,7 @@ import { useTheme, useThemeDispatch } from '@themes';
 const HomeScreen = () => {
   const styles = useStyle();
   const { selectedTheme, themeParams } = useTheme();
-  const { setTheme, setParams } = useThemeDispatch();
+  const { setTheme, setThemeParams } = useThemeDispatch();
   const [val, updateVal] = useState(1);
 
   const changeTheme = () => {
@@ -17,7 +17,7 @@ const HomeScreen = () => {
   };
 
   const changeFontMultiplier = () => {
-    setParams({
+    setThemeParams({
       fontSizeMultiplier: themeParams.fontSizeMultiplier === 1 ? 1.3 : 1,
     });
   };

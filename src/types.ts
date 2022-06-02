@@ -30,7 +30,7 @@ export type ThemeBaseStylesContextValue<BS extends BaseStyles<BS>> = {
 };
 export type ThemeDispatchContextValue<T extends Themes, P> = {
   setTheme: (t: ExtractThemeNames<T>) => void;
-  setParams: (p: P) => void;
+  setThemeParams: (p: P) => void;
 };
 export type ThemeContextProps<T extends Themes, BS extends Styles<BS>, P> = {
   initialThemeParams?: P;
