@@ -11,7 +11,6 @@ import {
   BaseStyles,
   StyleCreator,
   StyleObj,
-  BaseStyleObj,
   CombinedStyleObj,
   ThemeContextValue,
   ThemeDispatchContextValue,
@@ -19,10 +18,10 @@ import {
   ThemeBaseStylesContextValue,
 } from './types';
 
-function withBaseStyles<S, BS>(
-  styles: StyleObj<S>,
-  baseStyles: BaseStyleObj<BS>,
-): styles is S & { bs: BS } {
+function withBaseStyles<S extends Styles<S>, BS extends BaseStyles<BS>>(
+  _styles: S | (S & { bs: BS }),
+  baseStyles: BS,
+): _styles is S & { bs: BS } {
   return !!baseStyles;
 }
 
@@ -51,12 +50,12 @@ export function useStyle<
   const { t } = useTheme<T>();
 
   const styles = React.useMemo(() => {
-    const createdStyles = styleCreator(t, params) as CombinedStyleObj<S, BS>;
-    if (withBaseStyles<S, BS>(createdStyles, baseStyles)) {
+    const createdStyles = styleCreator(t, params) as
+      | StyleObj<S>
+      | CombinedStyleObj<S, BS>;
+    if (withBaseStyles(createdStyles, baseStyles)) {
       createdStyles.bs = baseStyles;
     }
-    // if (baseStyles) {
-    // }
     return createdStyles;
   }, [styleCreator, t, params, baseStyles]);
 

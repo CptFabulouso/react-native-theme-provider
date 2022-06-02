@@ -9,12 +9,13 @@ import lightTheme from './variants/lightTheme';
 
 export { useStyle };
 
+export type BaseStyles = ReturnType<typeof baseStylesCreator>;
+export type Themes = typeof themes;
+
 export const themes = {
   light: lightTheme,
   dark: darkTheme,
 };
-
-export type Themes = typeof themes;
 
 export const baseStylesCreator = createThemedBaseStyles<Themes>()((t) => ({
   page: {

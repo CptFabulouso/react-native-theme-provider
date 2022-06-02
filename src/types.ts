@@ -80,3 +80,16 @@ export type InitThemeProviderParams<T extends Themes, BS extends Styles<BS>> = {
   styleCacheManager?: StyleCacheManager<T, any, any>;
   baseStylesCreator?: BaseStyleCreator<T, BS>;
 };
+
+// export type WithUseStyleProps<
+//   S extends Styles<S>,
+//   BS extends BaseStyles<BS>,
+// > = {
+//   styles: CombinedStyleObj<S, BS>;
+// };
+
+export type WithUseStyleProps<
+  F extends (...args: any) => CombinedStyleObj<any, any>,
+> = {
+  styles: ReturnType<F>;
+};

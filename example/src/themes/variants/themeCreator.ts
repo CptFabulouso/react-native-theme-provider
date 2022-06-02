@@ -1,4 +1,3 @@
-import { createStylesWithProps } from '@pavelgric/react-native-theme-provider';
 import { StyleSheet } from 'react-native';
 
 import { borderRadii, spacing } from '../res/dims';
@@ -25,24 +24,7 @@ export const createTheme = (props: Props) => ({
   fontSizes,
   spacing,
   borderRadii,
-  baseStyles: createBaseStyle(props),
 });
-
-const createBaseStyle = createStylesWithProps(({ colors }: Props) => ({
-  pageFlexCenter: {
-    backgroundColor: colors.surface,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  flex: {
-    flex: 1,
-  },
-  center: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-}));
 
 const createTypography = ({ colors }: Props) =>
   StyleSheet.create({

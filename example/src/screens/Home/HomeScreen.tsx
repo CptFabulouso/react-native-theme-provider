@@ -21,7 +21,10 @@ const HomeScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.bs.flex}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.bs.flexCenter}
+    >
       <Text type="h1">h1</Text>
       <Text type="h2">h2</Text>
       <Text type="h3">h3</Text>
