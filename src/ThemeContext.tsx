@@ -22,7 +22,7 @@ export const ThemeBaseStylesContext =
 export const ThemeDispatchContext =
   React.createContext<ThemeDispatchContextValue<any, any> | null>(null);
 
-export function ThemeProvider<T extends Themes, BS extends Styles<BS>, P>({
+export function ThemeProvider<T extends Themes, BS extends Styles<BS>, TP>({
   children,
   initialTheme,
   onThemeChange,
@@ -31,7 +31,7 @@ export function ThemeProvider<T extends Themes, BS extends Styles<BS>, P>({
   baseStylesCreator,
   initialThemeParams,
   styleCacheManager = createThemedDefaultCacheManager<T>(),
-}: ThemeContextProps<T, BS, P>) {
+}: ThemeContextProps<T, BS, TP>) {
   const [themeName, setThemeName] =
     React.useState<ExtractThemeNames<T>>(initialTheme);
   const [themeParams, setThemeParams] = React.useState(initialThemeParams);
@@ -43,7 +43,7 @@ export function ThemeProvider<T extends Themes, BS extends Styles<BS>, P>({
   const t = React.useMemo(
     () =>
       typeof themes === 'function'
-        ? themes(themeParams as P)[themeName]
+        ? themes(themeParams as TP)[themeName]
         : themes[themeName],
     [themes, themeName, themeParams],
   );
@@ -63,7 +63,7 @@ export function ThemeProvider<T extends Themes, BS extends Styles<BS>, P>({
   );
 
   const changeThemeParams = React.useCallback(
-    (nextParams: P) => {
+    (nextParams: TP) => {
       onThemeParamsChange && onThemeParamsChange(nextParams);
       setThemeParams(nextParams);
     },

@@ -159,7 +159,7 @@ export function createThemedUseStyleCreator<
 export function initThemeProvider<
   T extends Themes,
   BS extends Styles<BS> = undefined,
-  P = undefined,
+  TP = undefined,
 >({
   themes,
   initialTheme,
@@ -168,7 +168,7 @@ export function initThemeProvider<
   styleCacheManager = createThemedDefaultCacheManager<T>(),
   baseStylesCreator,
   initialThemeParams,
-}: InitThemeProviderParams<T, BS, P>) {
+}: InitThemeProviderParams<T, BS, TP>) {
   const ThemedThemedProvider = ({
     children,
     onThemeChange: propsOnThemeChange,
@@ -178,7 +178,7 @@ export function initThemeProvider<
     initialThemeParams: propsInitialThemeParams,
   }: {
     children: React.ReactNode;
-  } & Partial<ThemeContextProps<T, BS, P>>) => {
+  } & Partial<ThemeContextProps<T, BS, TP>>) => {
     const handleThemeChange = React.useCallback(
       (nextThemeName: keyof T) => {
         propsOnThemeChange && propsOnThemeChange(nextThemeName);
@@ -187,7 +187,7 @@ export function initThemeProvider<
       [propsOnThemeChange],
     );
     const handleThemeParamsChange = React.useCallback(
-      (nextParams: P) => {
+      (nextParams: TP) => {
         propsOnThemeParamsChange && propsOnThemeParamsChange(nextParams);
         onThemeParamsChange && onThemeParamsChange(nextParams);
       },
@@ -208,7 +208,7 @@ export function initThemeProvider<
     );
   };
   const ThemedProviderComponent: React.ComponentType<
-    ThemeContextProps<T, BS, P>
+    ThemeContextProps<T, BS, TP>
   > = ThemeProvider;
 
   return {
@@ -216,8 +216,8 @@ export function initThemeProvider<
     ThemedProviderComponent,
     createUseStyle: createThemedUseStyleCreator<T, BS>(styleCacheManager),
     createStyle: createThemedStyleCreator<T>(styleCacheManager),
-    useTheme: createThemedUseTheme<T, P>(),
-    useThemeDispatch: createThemedUseThemeDispatch<T, P>(),
+    useTheme: createThemedUseTheme<T, TP>(),
+    useThemeDispatch: createThemedUseThemeDispatch<T, TP>(),
     useStyle: createThemedUseStyle<T, BS>(),
     useStyleWithParams: createThemedUseStyleWithParams<T, BS>(),
   };

@@ -62,7 +62,7 @@ export function useStyle<
   return styles;
 }
 
-export function useTheme<T extends Themes, P>(): ThemeContextValue<T, P> {
+export function useTheme<T extends Themes, TP>(): ThemeContextValue<T, TP> {
   const context = React.useContext(ThemeContext);
   if (context === null) {
     throw new Error('useTheme must be used within a ThemeProvider');
@@ -83,8 +83,8 @@ export function useThemeBaseStyles<
 
 export function useThemeDispatch<
   T extends Themes,
-  P,
->(): ThemeDispatchContextValue<T, P> {
+  TP,
+>(): ThemeDispatchContextValue<T, TP> {
   const context = React.useContext(ThemeDispatchContext);
   if (context === null) {
     throw new Error('useThemeDispatch must be used within a ThemeProvider');

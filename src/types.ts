@@ -19,24 +19,24 @@ export type CombinedStyleObj<
   BS extends BaseStyles<BS>,
 > = BS extends undefined ? S : S & { bs: BS };
 
-export type ThemeContextValue<T extends Themes, P> = {
+export type ThemeContextValue<T extends Themes, TP> = {
   selectedTheme: ExtractThemeNames<T>;
   themes: T;
   t: ExtractThemes<T>;
-  themeParams: P;
+  themeParams: TP;
 };
 export type ThemeBaseStylesContextValue<BS extends BaseStyles<BS>> = {
   baseStyles: BaseStyleObj<BS>;
 };
-export type ThemeDispatchContextValue<T extends Themes, P> = {
+export type ThemeDispatchContextValue<T extends Themes, TP> = {
   setTheme: (t: ExtractThemeNames<T>) => void;
-  setThemeParams: (p: P) => void;
+  setThemeParams: (p: TP) => void;
 };
-export type ThemeContextProps<T extends Themes, BS extends Styles<BS>, P> = {
-  initialThemeParams?: P;
-  themes: T | ((params: P) => T);
+export type ThemeContextProps<T extends Themes, BS extends Styles<BS>, TP> = {
+  initialThemeParams?: TP;
+  themes: T | ((params: TP) => T);
   initialTheme: ExtractThemeNames<T>;
-  onThemeParamsChange?: (nextParams: P) => void;
+  onThemeParamsChange?: (nextParams: TP) => void;
   onThemeChange?: (nextThemeName: ExtractThemeNames<T>) => void;
   baseStylesCreator?: BaseStyleCreator<T, BS>;
   children: React.ReactNode;
