@@ -44,7 +44,7 @@ export function createDefaultCacheManager<
   return {
     /*
       Clearing the cache on mount fixes duplicates in cache during development with enabled fast refresh.
-      This should not affect production app anyhow, since it should be mounted only once
+      This should not affect production app anyhow, since the ThemeProvider should be mounted only once
     */
     onProviderMount: () => DefaultStylesCache.resetAll(),
     onThemeChange: () => DefaultStylesCache.resetAll(),
