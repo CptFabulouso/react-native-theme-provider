@@ -19,9 +19,10 @@ export const createRenderWithThemeProvider = (
 export const createRenderWithProps = <
   T extends Themes,
   BS extends Styles<BS>,
+  BSKey extends string,
   TP,
 >(
-  props: ThemeContextProps<T, BS, TP>,
+  props: Omit<ThemeContextProps<T, BS, BSKey, TP>, 'children'>,
 ) => {
   const Wrapper = ({ children }: { children: React.ReactNode }) => {
     return <ThemeProvider {...props}>{children}</ThemeProvider>;

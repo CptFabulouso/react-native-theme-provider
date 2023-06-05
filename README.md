@@ -474,7 +474,7 @@ export default InnerComponent = () => {
 ## Passing and accessing default styles
 
 You can create and access some basic styles like `{ flex: 1 }`, so you don't have to recreate them everywhere over and over again.
-These styles will be passed to you by the `const styles = useStyle()` function and will be under `styles.bs` key. The `bs` key is reserved and you can't overwrite it in your style creator, meaning you can't have there some `bs: { flex: 1}`. 
+These styles will be passed to you by the `const styles = useStyle()` function and will be (by default) under `styles.bs` key. The `bs` key is reserved and you can't overwrite it in your style creator, meaning you can't have there some `bs: { flex: 1}`. You can change the `bs` key to whatever you like with `baseStylesKey` prop.
 This applies only if you pass the `baseStylesCreator` to the `initThemeProvider` or `ThemeProvider`, it's not required.
 The `bs` object is singleton and is the same in all `styles` objects from `useStyle`.
 
@@ -512,7 +512,12 @@ export const {
   useTheme,
   useThemeDispatch,
   ThemeProvider,
-} = initThemeProvider({ themes, initialTheme: 'red', baseStylesCreator });
+} = initThemeProvider({ 
+  themes, 
+  initialTheme: 'red', 
+  baseStylesCreator, 
+  baseStylesKey: 'customBS' // base styles will be then accessible in styles.customBS
+});
 
 // OR
 
@@ -521,7 +526,11 @@ export default App = () => {
 
   return (
     /* You can also overwrite some values passed to initThemeProvider here, e.g. if you want to set initial theme based on systems default color scheme */
-    <ThemeProvider baseStylesCreator initialTheme={colorScheme === 'dark' : 'red' : 'blue'}>
+    <ThemeProvider 
+      baseStylesCreator 
+      initialTheme={colorScheme === 'dark' : 'red' : 'blue'} 
+      baseStylesKey="customBS"
+    >
       <InnerComponent />
     </ThemeProvider>
   );
@@ -548,8 +557,8 @@ export default InnerComponent = () => {
   const styles = useStyle();
 
   return (
-    /* under bs key are styles created by baseStylesCreator */
-    <View style={styles.bs.page}>
+    /* under `customBS` (`bs` by default) key are styles created by baseStylesCreator. */
+    <View style={styles.customBS.page}>
       <View style={styles.container} />
     </View>
   );
@@ -558,7 +567,7 @@ export default InnerComponent = () => {
 
 ## Passing theme params
 
-You can pass custom params to your themes, 
+You can pass custom params to your themes,
 
 ## Exported functions
 

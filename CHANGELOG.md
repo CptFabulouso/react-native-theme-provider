@@ -1,5 +1,9 @@
 # react-native-theme-provider changelog
 
+## 0.1.3
+
+- Add prop `baseStylesKey` to modify under which key the base styles are stored.
+
 ## 0.1.2
 
 - Add support for passing default styles, see [Passing and accessing default styles](./README.md#passing-and-accessing-default-styles)

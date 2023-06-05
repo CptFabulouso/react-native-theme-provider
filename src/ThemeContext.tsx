@@ -17,12 +17,17 @@ export const ThemeContext = React.createContext<ThemeContextValue<
 > | null>(null);
 
 export const ThemeBaseStylesContext =
-  React.createContext<ThemeBaseStylesContextValue<any> | null>(null);
+  React.createContext<ThemeBaseStylesContextValue<any, any> | null>(null);
 
 export const ThemeDispatchContext =
   React.createContext<ThemeDispatchContextValue<any, any> | null>(null);
 
-export function ThemeProvider<T extends Themes, BS extends Styles<BS>, TP>({
+export function ThemeProvider<
+  T extends Themes,
+  BS extends Styles<BS>,
+  BSKey extends string,
+  TP,
+>({
   children,
   initialTheme,
   onThemeChange,
@@ -31,7 +36,8 @@ export function ThemeProvider<T extends Themes, BS extends Styles<BS>, TP>({
   baseStylesCreator,
   initialThemeParams,
   styleCacheManager = createThemedDefaultCacheManager<T>(),
-}: ThemeContextProps<T, BS, TP>) {
+  baseStylesKey = 'bs' as BSKey,
+}: ThemeContextProps<T, BS, BSKey, TP>) {
   const [themeName, setThemeName] =
     React.useState<ExtractThemeNames<T>>(initialTheme);
   const [themeParams, setThemeParams] = React.useState(initialThemeParams);
@@ -74,7 +80,9 @@ export function ThemeProvider<T extends Themes, BS extends Styles<BS>, TP>({
     <ThemeContext.Provider
       value={{ selectedTheme: themeName, themes, t, themeParams }}
     >
-      <ThemeBaseStylesContext.Provider value={{ baseStyles }}>
+      <ThemeBaseStylesContext.Provider
+        value={{ baseStyles, baseStylesKey: baseStylesKey }}
+      >
         <ThemeDispatchContext.Provider
           value={{ setTheme: changeTheme, setThemeParams: changeThemeParams }}
         >

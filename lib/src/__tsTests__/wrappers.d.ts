@@ -4,7 +4,7 @@ declare const styleCreator: import("..").StyleCreator<import("..").Themes, {
         backgroundColor: any;
         borderBottomColor: string;
     };
-}, undefined>;
+}>;
 declare const useStyleTest: () => {
     container: {
         backgroundColor: any;
@@ -16,16 +16,16 @@ declare const useStyleTest: () => {
         borderBottomColor: string;
     };
 } & {
-    bs: import("..").NamedStyles<any>;
+    [x: string]: import("..").NamedStyles<any>;
 }) | ({
     container: {
         backgroundColor: any;
         borderBottomColor: string;
     };
 } & {
-    bs: import("..").NamedStyles<unknown>;
+    [x: string]: import("..").NamedStyles<unknown>;
 });
-declare type ClassCompWithUseStyleProps = {
+type ClassCompWithUseStyleProps = {
     styles: ReturnType<typeof useStyleTest>;
     val: string;
 };
@@ -35,7 +35,7 @@ export declare class ClassCompUseStyle extends React.Component<ClassCompWithUseS
 export declare const ClassCompWithUseStyle: React.FC<Omit<ClassCompWithUseStyleProps, "styles">>;
 export declare const ClassCompWithUseStyleParamsMissing: React.FC<Omit<ClassCompWithUseStyleProps, "styles">>;
 export declare const ClassCompWithUseStyleParams: React.FC<Omit<ClassCompWithUseStyleProps, "styles">>;
-declare type ClassCompWithCreateStyleProps = {
+type ClassCompWithCreateStyleProps = {
     styles: ReturnType<typeof styleCreator>;
     val: string;
 };

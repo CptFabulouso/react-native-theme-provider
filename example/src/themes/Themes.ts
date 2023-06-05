@@ -44,6 +44,7 @@ export const {
 } = initThemeProvider({
   themes,
   initialTheme: 'light',
+  baseStylesKey: 'customBS',
   baseStylesCreator,
   initialThemeParams: {
     fontSizeMultiplier: 1,

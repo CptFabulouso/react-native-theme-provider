@@ -18,46 +18,48 @@ import {
   ThemeBaseStylesContextValue,
 } from './types';
 
-function withBaseStyles<S extends Styles<S>, BS extends BaseStyles<BS>>(
-  _styles: S | (S & { bs: BS }),
-  baseStyles: BS,
-): _styles is S & { bs: BS } {
-  return !!baseStyles;
-}
-
 export function useStyle<
   T extends Themes,
   S extends Styles<S>,
   BS extends BaseStyles<BS>,
+  BSKey extends string,
 >(
   styleCreator: StyleCreator<T, S>,
   params?: undefined,
-): CombinedStyleObj<S, BS>;
+): CombinedStyleObj<S, BS, BSKey>;
 export function useStyle<
   T extends Themes,
   S extends Styles<S>,
   BS extends BaseStyles<BS>,
+  BSKey extends string,
   P,
->(styleCreator: StyleCreator<T, S, P>, params: P): CombinedStyleObj<S, BS>;
+>(
+  styleCreator: StyleCreator<T, S, P>,
+  params: P,
+): CombinedStyleObj<S, BS, BSKey>;
 
 export function useStyle<
   T extends Themes,
   S extends Styles<S>,
   BS extends BaseStyles<BS>,
+  BSKey extends string,
   P,
 >(styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>, params?: P) {
-  const { baseStyles } = useThemeBaseStyles<BS>();
+  const { baseStyles, baseStylesKey } = useThemeBaseStyles<BS, BSKey>();
   const { t } = useTheme<T, any>();
 
   const styles = React.useMemo(() => {
     const createdStyles = styleCreator(t, params) as
       | StyleObj<S>
-      | CombinedStyleObj<S, BS>;
-    if (withBaseStyles(createdStyles, baseStyles)) {
-      createdStyles.bs = baseStyles;
+      | CombinedStyleObj<S, BS, BSKey>;
+    if (baseStyles) {
+      return {
+        ...createdStyles,
+        [baseStylesKey]: baseStyles,
+      };
     }
     return createdStyles;
-  }, [styleCreator, t, params, baseStyles]);
+  }, [styleCreator, t, params, baseStylesKey, baseStyles]);
 
   return styles;
 }
@@ -72,7 +74,8 @@ export function useTheme<T extends Themes, TP>(): ThemeContextValue<T, TP> {
 
 export function useThemeBaseStyles<
   BS extends BaseStyles<BS>,
->(): ThemeBaseStylesContextValue<BS> {
+  BSKey extends string,
+>(): ThemeBaseStylesContextValue<BS, BSKey> {
   const context = React.useContext(ThemeBaseStylesContext);
 
   if (context === null) {

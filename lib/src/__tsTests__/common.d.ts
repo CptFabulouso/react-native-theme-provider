@@ -1,11 +1,11 @@
-declare type ValidateShape<T, Shape> = T extends Shape ? Exclude<keyof T, keyof Shape> extends never ? T : never : never;
-declare type StyleWithoutParams = {
+type ValidateShape<T, Shape> = T extends Shape ? Exclude<keyof T, keyof Shape> extends never ? T : never : never;
+type StyleWithoutParams = {
     container: {
         backgroundColor: string;
         borderBottomColor: string;
     };
 };
-declare type StyleWithParams = {
+type StyleWithParams = {
     container: {
         backgroundColor: string;
         borderBottomColor: string;
@@ -59,5 +59,5 @@ export declare const themes: {
 export declare const styleParams: {
     val: string;
 };
-export declare type Themes = typeof themes;
+export type Themes = typeof themes;
 export {};

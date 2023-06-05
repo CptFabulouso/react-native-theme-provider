@@ -5,7 +5,9 @@ import { createThemedBaseStylesCreator, initThemeProvider } from '../creators';
 type initialThemeParams = {
   fontSizeMultiplier: number;
 };
-export const themes = ({ fontSizeMultiplier }: initialThemeParams) => ({
+export const themes = (
+  { fontSizeMultiplier }: initialThemeParams = { fontSizeMultiplier: 1 },
+) => ({
   light: {
     colors: {
       primary: 'white',
@@ -34,18 +36,18 @@ export const initialThemeParams: initialThemeParams = {
 
 type Themes = typeof themes;
 
-const baseStylesCreator = createThemedBaseStylesCreator<ReturnType<Themes>>()(
-  (t) => ({
-    page: {
-      flex: 1,
-      backgroundColor: t.colors.primary,
-    },
-    text: {
-      color: t.colors.primary,
-      fontSize: t.typography.h1.fontSize,
-    },
-  }),
-);
+export const baseStylesCreator = createThemedBaseStylesCreator<
+  ReturnType<Themes>
+>()((t) => ({
+  page: {
+    flex: 1,
+    backgroundColor: t.colors.primary,
+  },
+  text: {
+    color: t.colors.primary,
+    fontSize: t.typography.h1.fontSize,
+  },
+}));
 
 export const {
   createUseStyle,
@@ -59,5 +61,8 @@ export const {
   themes,
   initialTheme: 'light',
   baseStylesCreator,
+  baseStylesKey: 'customBS',
   initialThemeParams,
 });
+
+export const initialThemes = themes(initialThemeParams);

@@ -83,42 +83,46 @@ export function createUseStyle<
   T extends Themes,
   S extends Styles<S>,
   BS extends BaseStyles<BS>,
+  BSKey extends string,
   P = undefined,
 >(
   styleCreator: StyleCreator<T, S, P>,
 ): (
   ...params: P extends undefined ? [] : [params: P]
-) => CombinedStyleObj<S, BS>;
+) => CombinedStyleObj<S, BS, BSKey>;
 
 export function createUseStyle<
   T extends Themes,
   S extends Styles<S>,
   BS extends BaseStyles<BS>,
+  BSKey extends string,
   P,
 >(styleCreator: StyleCreator<T, S, P>) {
   return (params: P) => {
-    return useStyle<T, S, BS, P>(styleCreator, params);
+    return useStyle<T, S, BS, BSKey, P>(styleCreator, params);
   };
 }
 
 export function createThemedUseStyle<
   T extends Themes,
   BS extends BaseStyles<BS> = undefined,
+  BSKey extends string = 'bs',
 >() {
   return function <S extends Styles<S>>(styleCreator: StyleCreator<T, S>) {
-    return useStyle<T, S, BS>(styleCreator, undefined);
+    return useStyle<T, S, BS, BSKey>(styleCreator, undefined);
   };
 }
 
 export function createThemedUseStyleWithParams<
   T extends Themes,
   BS extends BaseStyles<BS> = undefined,
+  BSKey extends string = 'bs',
 >() {
   return function <S extends Styles<S>, P>(
     styleCreator: StyleCreator<T, S, P>,
     params: P,
   ) {
-    return useStyle<T, S, BS, P>(styleCreator, params);
+    return useStyle<T, S, BS, BSKey, P>(styleCreator, params);
   };
 }
 
@@ -135,22 +139,24 @@ export function createThemedStyleCreator<T extends Themes>(
 export function createThemedUseStyleCreator<
   T extends Themes,
   BS extends BaseStyles<BS> = undefined,
+  BSKey extends string = 'bs',
 >(
   styleCacheManager: StyleCacheManager<T, any, any>,
 ): <S extends Styles<S>, P = undefined>(
   styleCreator: StyleCreator<T, S, P>,
 ) => (
   ...params: P extends undefined ? [] : [params: P]
-) => CombinedStyleObj<S, BS>;
+) => CombinedStyleObj<S, BS, BSKey>;
 
 export function createThemedUseStyleCreator<
   T extends Themes,
   BS extends BaseStyles<BS>,
+  BSKey extends string,
 >(styleCacheManager: StyleCacheManager<T, any, any>) {
   return function <S extends Styles<S>, P>(
     styleCreator: StyleCreator<T, S, P>,
   ) {
-    return createUseStyle<T, S, BS, P>(
+    return createUseStyle<T, S, BS, BSKey, P>(
       createStyleCreator(styleCreator, styleCacheManager),
     );
   };
@@ -158,6 +164,7 @@ export function createThemedUseStyleCreator<
 
 export function initThemeProvider<
   T extends Themes,
+  BSKey extends string = 'bs',
   BS extends Styles<BS> = undefined,
   TP = undefined,
 >({
@@ -168,7 +175,8 @@ export function initThemeProvider<
   styleCacheManager = createThemedDefaultCacheManager<T>(),
   baseStylesCreator,
   initialThemeParams,
-}: InitThemeProviderParams<T, BS, TP>) {
+  baseStylesKey = 'bs' as BSKey,
+}: InitThemeProviderParams<T, BS, BSKey, TP>) {
   const ThemedThemedProvider = ({
     children,
     onThemeChange: propsOnThemeChange,
@@ -178,7 +186,7 @@ export function initThemeProvider<
     initialThemeParams: propsInitialThemeParams,
   }: {
     children: React.ReactNode;
-  } & Partial<ThemeContextProps<T, BS, TP>>) => {
+  } & Partial<ThemeContextProps<T, BS, BSKey, TP>>) => {
     const handleThemeChange = React.useCallback(
       (nextThemeName: keyof T) => {
         propsOnThemeChange && propsOnThemeChange(nextThemeName);
@@ -201,6 +209,7 @@ export function initThemeProvider<
         onThemeChange={handleThemeChange}
         onThemeParamsChange={handleThemeParamsChange}
         baseStylesCreator={propsBaseStylesCreator ?? baseStylesCreator}
+        baseStylesKey={baseStylesKey}
         initialThemeParams={propsInitialThemeParams ?? initialThemeParams}
       >
         {children}
@@ -208,17 +217,19 @@ export function initThemeProvider<
     );
   };
   const ThemedProviderComponent: React.ComponentType<
-    ThemeContextProps<T, BS, TP>
+    ThemeContextProps<T, BS, BSKey, TP>
   > = ThemeProvider;
 
   return {
     ThemeProvider: ThemedThemedProvider,
     ThemedProviderComponent,
-    createUseStyle: createThemedUseStyleCreator<T, BS>(styleCacheManager),
+    createUseStyle: createThemedUseStyleCreator<T, BS, BSKey>(
+      styleCacheManager,
+    ),
     createStyle: createThemedStyleCreator<T>(styleCacheManager),
     useTheme: createThemedUseTheme<T, TP>(),
     useThemeDispatch: createThemedUseThemeDispatch<T, TP>(),
-    useStyle: createThemedUseStyle<T, BS>(),
-    useStyleWithParams: createThemedUseStyleWithParams<T, BS>(),
+    useStyle: createThemedUseStyle<T, BS, BSKey>(),
+    useStyleWithParams: createThemedUseStyleWithParams<T, BS, BSKey>(),
   };
 }

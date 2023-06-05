@@ -60,7 +60,7 @@ export const BaseStyleTextComponent = ({
 }) => {
   const styles = useStyles();
   return (
-    <Text testID={`text-${id}`} style={styles.bs.text}>
+    <Text testID={`text-${id}`} style={styles.customBS.text}>
       {children}
     </Text>
   );

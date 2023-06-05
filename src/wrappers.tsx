@@ -4,24 +4,24 @@ import { useStyle } from './hooks';
 import { Styles, StyleCreator, StyleObj, CombinedStyleObj } from './types';
 
 export type WithStylesProps = {
-  styles: CombinedStyleObj<any, any>;
+  styles: CombinedStyleObj<any, any, string>;
 };
 
 type InjectedProps = WithStylesProps;
 
 export function withUseStyle<TProps, T extends InjectedProps>(
   WrappedComponent: React.ComponentType<TProps>,
-  useStyleParam: () => CombinedStyleObj<any, any>,
+  useStyleParam: () => CombinedStyleObj<any, any, string>,
 ): React.FC<Omit<TProps, keyof T>>;
 export function withUseStyle<TProps, T extends InjectedProps, P>(
   WrappedComponent: React.ComponentType<TProps>,
-  useStyleParam: (params: P) => CombinedStyleObj<any, any>,
+  useStyleParam: (params: P) => CombinedStyleObj<any, any, string>,
   mapPropsToParams: (props: Omit<TProps, keyof T>) => P,
 ): React.FC<Omit<TProps, keyof T>>;
 
 export function withUseStyle<TProps, T extends InjectedProps, P>(
   WrappedComponent: React.ComponentType<TProps>,
-  useStyleParam: (params?: P) => CombinedStyleObj<any, any>,
+  useStyleParam: (params?: P) => CombinedStyleObj<any, any, string>,
   mapPropsToParams?: (props: Omit<TProps, keyof T>) => P,
 ): React.FC<Omit<TProps, keyof T>> {
   return (props) => {

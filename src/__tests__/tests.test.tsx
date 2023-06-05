@@ -12,12 +12,10 @@ import {
   TextComponentWithParams,
 } from './test-components';
 import { createRenderWithThemeProvider } from './test-utils';
-import { ThemeProvider, initialThemeParams, themes } from './theme';
+import { ThemeProvider, initialThemes } from './theme';
 
 export const render: typeof defaultRender =
   createRenderWithThemeProvider(ThemeProvider);
-
-const initialThemes = themes(initialThemeParams);
 
 describe('Style tests', () => {
   it('correctly renders styles without params', () => {
