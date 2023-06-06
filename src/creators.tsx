@@ -19,10 +19,11 @@ import {
 
 export function createThemedUseTheme<
   T extends Themes,
+  ThemeKey extends string,
   P,
->(): () => ThemeContextValue<T, P> {
+>(): () => ThemeContextValue<T, ThemeKey, P> {
   return function () {
-    return useTheme<T, P>();
+    return useTheme<T, ThemeKey, P>();
   };
 }
 
@@ -166,6 +167,7 @@ export function initThemeProvider<
   T extends Themes,
   BSKey extends string = 'bs',
   BS extends Styles<BS> = undefined,
+  ThemeKey extends string = 't',
   TP = undefined,
 >({
   themes,
@@ -176,7 +178,8 @@ export function initThemeProvider<
   baseStylesCreator,
   initialThemeParams,
   baseStylesKey = 'bs' as BSKey,
-}: InitThemeProviderParams<T, BS, BSKey, TP>) {
+  themeKey = 't' as ThemeKey,
+}: InitThemeProviderParams<T, BS, BSKey, ThemeKey, TP>) {
   const ThemedThemedProvider = ({
     children,
     onThemeChange: propsOnThemeChange,
@@ -184,9 +187,11 @@ export function initThemeProvider<
     initialTheme: propsInitialTheme,
     baseStylesCreator: propsBaseStylesCreator,
     initialThemeParams: propsInitialThemeParams,
+    themeKey: propsThemeKey,
+    baseStylesKey: propsBaseStylesKey,
   }: {
     children: React.ReactNode;
-  } & Partial<ThemeContextProps<T, BS, BSKey, TP>>) => {
+  } & Partial<ThemeContextProps<T, BS, BSKey, ThemeKey, TP>>) => {
     const handleThemeChange = React.useCallback(
       (nextThemeName: keyof T) => {
         propsOnThemeChange && propsOnThemeChange(nextThemeName);
@@ -209,15 +214,16 @@ export function initThemeProvider<
         onThemeChange={handleThemeChange}
         onThemeParamsChange={handleThemeParamsChange}
         baseStylesCreator={propsBaseStylesCreator ?? baseStylesCreator}
-        baseStylesKey={baseStylesKey}
+        baseStylesKey={propsBaseStylesKey ?? baseStylesKey}
         initialThemeParams={propsInitialThemeParams ?? initialThemeParams}
+        themeKey={propsThemeKey ?? themeKey}
       >
         {children}
       </ThemeProvider>
     );
   };
   const ThemedProviderComponent: React.ComponentType<
-    ThemeContextProps<T, BS, BSKey, TP>
+    ThemeContextProps<T, BS, BSKey, ThemeKey, TP>
   > = ThemeProvider;
 
   return {
@@ -227,7 +233,7 @@ export function initThemeProvider<
       styleCacheManager,
     ),
     createStyle: createThemedStyleCreator<T>(styleCacheManager),
-    useTheme: createThemedUseTheme<T, TP>(),
+    useTheme: createThemedUseTheme<T, ThemeKey, TP>(),
     useThemeDispatch: createThemedUseThemeDispatch<T, TP>(),
     useStyle: createThemedUseStyle<T, BS, BSKey>(),
     useStyleWithParams: createThemedUseStyleWithParams<T, BS, BSKey>(),

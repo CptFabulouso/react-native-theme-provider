@@ -612,6 +612,7 @@ export const {
   initialTheme: 'light',
   onThemeChange: (nextThemeName) => {}
   styleCreatorCache: DefaultCacheManager
+  // see table below for other props
 });
 ```
 
@@ -620,7 +621,12 @@ export const {
 | themes | Object | Yes | Themes object containing app themes |
 | initialTheme | String | Yes | Name of one of the theme |
 | onThemeChange | Function | No | Called when theme changes |
+| initialThemeParams | Object | Yes | Initial theme params |
+| themeKey | String | Yes | By default values of selected theme returned by `useTheme` are accessed via `t` keyword, use this prop to change it to other key. E.g. by setting it to `"customT"` you will access theme like this `const { customT } = useTheme()`. Can be useful to avoid name collisions, as `t` is often used with translations |
+| onThemeParamsChange | Function | No | Called when theme params change |
 | styleCacheManager | Object | No | Object with functions to handle style caching. By default uses DefaultCacheManager |
+| baseStylesCreator | Function | No | Used to create base styles, which can be accessed in every `styles` object returned from `useStyles` |
+| baseStylesKey | String | No | Used with `baseStylesCreator`. By default the styles are accessible via `bs` keyword, use this prop to change it to other key. E.g. by setting it to `"customBS"` you will access base styles in `styles.customBS` |
 
 ### `createStyle`
 
@@ -694,7 +700,7 @@ export default SomeComponent = () => {
   const {
     selectedTheme, // the key of selected theme
     themes, // the whole themes object
-    t, // current theme object
+    t, // current theme object. This key can be changed by setting `themeKey` in ThemeProvider
   } = useTheme();
   const { setTheme } = useThemeDispatch();
 

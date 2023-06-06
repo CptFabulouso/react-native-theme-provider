@@ -3,6 +3,7 @@
 ## 0.1.3
 
 - Add prop `baseStylesKey` to modify under which key the base styles are stored.
+- Add prop `themeKey` to modify under which key theme object is returned from `useTheme()`
 
 ## 0.1.2
 

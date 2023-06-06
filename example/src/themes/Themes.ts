@@ -44,6 +44,7 @@ export const {
 } = initThemeProvider({
   themes,
   initialTheme: 'light',
+  themeKey: 'customT',
   baseStylesKey: 'customBS',
   baseStylesCreator,
   initialThemeParams: {

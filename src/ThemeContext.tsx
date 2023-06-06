@@ -13,6 +13,7 @@ import {
 
 export const ThemeContext = React.createContext<ThemeContextValue<
   any,
+  any,
   any
 > | null>(null);
 
@@ -26,6 +27,7 @@ export function ThemeProvider<
   T extends Themes,
   BS extends Styles<BS>,
   BSKey extends string,
+  ThemeKey extends string,
   TP,
 >({
   children,
@@ -37,7 +39,8 @@ export function ThemeProvider<
   initialThemeParams,
   styleCacheManager = createThemedDefaultCacheManager<T>(),
   baseStylesKey = 'bs' as BSKey,
-}: ThemeContextProps<T, BS, BSKey, TP>) {
+  themeKey = 't' as ThemeKey,
+}: ThemeContextProps<T, BS, BSKey, ThemeKey, TP>) {
   const [themeName, setThemeName] =
     React.useState<ExtractThemeNames<T>>(initialTheme);
   const [themeParams, setThemeParams] = React.useState(initialThemeParams);
@@ -78,7 +81,13 @@ export function ThemeProvider<
 
   return (
     <ThemeContext.Provider
-      value={{ selectedTheme: themeName, themes, t, themeParams }}
+      value={{
+        selectedTheme: themeName,
+        themes,
+        themeKey,
+        [themeKey]: t,
+        themeParams,
+      }}
     >
       <ThemeBaseStylesContext.Provider
         value={{ baseStyles, baseStylesKey: baseStylesKey }}

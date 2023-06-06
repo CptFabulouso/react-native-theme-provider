@@ -25,12 +25,12 @@ export type CombinedStyleObj<
   BSKey extends string,
 > = BS extends undefined ? S : S & { [key in BSKey]: BS };
 
-export type ThemeContextValue<T extends Themes, TP> = {
+export type ThemeContextValue<T extends Themes, ThemeKey extends string, TP> = {
   selectedTheme: ExtractThemeNames<T>;
   themes: T;
-  t: ExtractThemes<T>;
   themeParams: TP;
-};
+  themeKey: ThemeKey;
+} & { [key in ThemeKey]: ExtractThemes<T> };
 export type ThemeBaseStylesContextValue<
   BS extends BaseStyles<BS>,
   BSKey extends string,
@@ -47,6 +47,7 @@ export type ThemeContextProps<
   T extends Themes,
   BS extends Styles<BS>,
   BSKey extends string,
+  ThemeKey extends string,
   TP,
 > = {
   initialThemeParams?: TP;
@@ -58,14 +59,16 @@ export type ThemeContextProps<
   baseStylesKey?: BSKey;
   children: React.ReactNode;
   styleCacheManager?: StyleCacheManager<T, any, any>;
+  themeKey?: ThemeKey;
 };
 
 export type InitThemeProviderParams<
   T extends Themes,
   BS extends Styles<BS>,
   BSKey extends string,
+  ThemeKey extends string,
   P = undefined,
-> = Omit<ThemeContextProps<T, BS, BSKey, P>, 'children'>;
+> = Omit<ThemeContextProps<T, BS, BSKey, ThemeKey, P>, 'children'>;
 
 export type StyleCreator<
   T extends Themes,

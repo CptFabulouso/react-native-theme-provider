@@ -43,10 +43,14 @@ export function useStyle<
   S extends Styles<S>,
   BS extends BaseStyles<BS>,
   BSKey extends string,
+  ThemeKey extends string,
   P,
 >(styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>, params?: P) {
   const { baseStyles, baseStylesKey } = useThemeBaseStyles<BS, BSKey>();
-  const { t } = useTheme<T, any>();
+  const useThemeValues = useTheme<T, ThemeKey, any>();
+  const t = useThemeValues[
+    useThemeValues.themeKey
+  ] as unknown as ExtractThemes<T>;
 
   const styles = React.useMemo(() => {
     const createdStyles = styleCreator(t, params) as
@@ -64,12 +68,16 @@ export function useStyle<
   return styles;
 }
 
-export function useTheme<T extends Themes, TP>(): ThemeContextValue<T, TP> {
+export function useTheme<
+  T extends Themes,
+  ThemeKey extends string,
+  TP,
+>(): ThemeContextValue<T, ThemeKey, TP> {
   const context = React.useContext(ThemeContext);
   if (context === null) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-  return context;
+  return context as ThemeContextValue<T, ThemeKey, TP>;
 }
 
 export function useThemeBaseStyles<
