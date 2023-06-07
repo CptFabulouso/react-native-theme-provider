@@ -1,49 +1,101 @@
 import * as React from 'react';
 
-import { ThemeContext, ThemeDispatchContext } from './ThemeContext';
+import {
+  ThemeBaseStylesContext,
+  ThemeContext,
+  ThemeDispatchContext,
+} from './ThemeContext';
 import {
   ExtractThemes,
   Styles,
+  BaseStyles,
   StyleCreator,
   StyleObj,
+  CombinedStyleObj,
   ThemeContextValue,
   ThemeDispatchContextValue,
   Themes,
+  ThemeBaseStylesContextValue,
 } from './types';
 
-export function useStyle<T extends Themes, S extends Styles<S>>(
+export function useStyle<
+  T extends Themes,
+  S extends Styles<S>,
+  BS extends BaseStyles<BS>,
+  BSKey extends string,
+>(
   styleCreator: StyleCreator<T, S>,
   params?: undefined,
-): StyleObj<S>;
-export function useStyle<T extends Themes, S extends Styles<S>, P>(
+): CombinedStyleObj<S, BS, BSKey>;
+export function useStyle<
+  T extends Themes,
+  S extends Styles<S>,
+  BS extends BaseStyles<BS>,
+  BSKey extends string,
+  P,
+>(
   styleCreator: StyleCreator<T, S, P>,
   params: P,
-): StyleObj<S>;
+): CombinedStyleObj<S, BS, BSKey>;
 
-export function useStyle<T extends Themes, S extends Styles<S>, P>(
-  styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>,
-  params?: P,
-) {
-  const { t } = useTheme<T>();
+export function useStyle<
+  T extends Themes,
+  S extends Styles<S>,
+  BS extends BaseStyles<BS>,
+  BSKey extends string,
+  ThemeKey extends string,
+  P,
+>(styleCreator: (theme: ExtractThemes<T>, p?: P) => StyleObj<S>, params?: P) {
+  const { baseStyles, baseStylesKey } = useThemeBaseStyles<BS, BSKey>();
+  const useThemeValues = useTheme<T, ThemeKey, any>();
+  const t = useThemeValues[
+    useThemeValues.themeKey
+  ] as unknown as ExtractThemes<T>;
 
   const styles = React.useMemo(() => {
-    return styleCreator(t, params);
-  }, [styleCreator, t, params]);
+    const createdStyles = styleCreator(t, params) as
+      | StyleObj<S>
+      | CombinedStyleObj<S, BS, BSKey>;
+    if (baseStyles) {
+      return {
+        ...createdStyles,
+        [baseStylesKey]: baseStyles,
+      };
+    }
+    return createdStyles;
+  }, [styleCreator, t, params, baseStylesKey, baseStyles]);
 
   return styles;
 }
 
-export function useTheme<T extends Themes>(): ThemeContextValue<T> {
+export function useTheme<
+  T extends Themes,
+  ThemeKey extends string,
+  TP,
+>(): ThemeContextValue<T, ThemeKey, TP> {
   const context = React.useContext(ThemeContext);
   if (context === null) {
     throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context as ThemeContextValue<T, ThemeKey, TP>;
+}
+
+export function useThemeBaseStyles<
+  BS extends BaseStyles<BS>,
+  BSKey extends string,
+>(): ThemeBaseStylesContextValue<BS, BSKey> {
+  const context = React.useContext(ThemeBaseStylesContext);
+
+  if (context === null) {
+    throw new Error('useThemeBaseStyles must be used within a ThemeProvider');
   }
   return context;
 }
 
 export function useThemeDispatch<
   T extends Themes,
->(): ThemeDispatchContextValue<T> {
+  TP,
+>(): ThemeDispatchContextValue<T, TP> {
   const context = React.useContext(ThemeDispatchContext);
   if (context === null) {
     throw new Error('useThemeDispatch must be used within a ThemeProvider');

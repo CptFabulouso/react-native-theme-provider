@@ -2,16 +2,20 @@
 
 - [React Native Theme Provider](#react-native-theme-provider)
   - [Installation](#installation)
-  - [Usage with initThemeProvider (Recommended)](#usage-with-initthemeprovider-recommended)
-    - [Initialize themes and the theme provider](#initialize-themes-and-the-theme-provider)
-    - [Wrap your app with exported ThemeProvider](#wrap-your-app-with-exported-themeprovider)
-    - [Create style for component](#create-style-for-component)
-    - [Change or access theme](#change-or-access-theme)
-  - [Usage without initThemeProvider](#usage-without-initthemeprovider)
-    - [Wrap your app with ThemeProvider](#wrap-your-app-with-themeprovider)
-  - [Usage without any helpers](#usage-without-any-helpers)
+  - [Usage](#usage)
+    - [with initThemeProvider (Recommended)](#with-initthemeprovider-recommended)
+      - [Initialize themes and the theme provider](#initialize-themes-and-the-theme-provider)
+      - [Wrap your app with exported ThemeProvider](#wrap-your-app-with-exported-themeprovider)
+      - [Create style for component](#create-style-for-component)
+      - [Change or access theme](#change-or-access-theme)
+      - [Change or access theme params](#change-or-access-theme-params)
+    - [Usage without initThemeProvider](#usage-without-initthemeprovider)
+      - [Wrap your app with ThemeProvider](#wrap-your-app-with-themeprovider)
+    - [Usage without any helpers](#usage-without-any-helpers)
   - [Passing params to style creator](#passing-params-to-style-creator)
     - [Passing params examples](#passing-params-examples)
+  - [Passing and accessing default styles](#passing-and-accessing-default-styles)
+  - [Passing theme params](#passing-theme-params)
   - [Exported functions](#exported-functions)
     - [`initThemeProvider`](#initthemeprovider)
     - [`createStyle`](#createstyle)
@@ -23,6 +27,8 @@
     - [`createThemedUseStyleCreator`](#createthemedusestylecreator)
     - [`createThemedUseTheme`](#createthemedusetheme)
     - [`createThemedUseThemeDispatch`](#createthemedusethemedispatch)
+    - [`createThemedUseStyle`](#createthemedusestyle)
+    - [`createThemedUseStyleWithParams`](#createthemedusestylewithparams)
   - [Helper functions](#helper-functions)
     - [`createStylesWithProps`](#createstyleswithprops)
   - [Wrappers](#wrappers)
@@ -37,15 +43,16 @@
       - [onCacheStyleCreator](#oncachestylecreator-1)
   - [Recommendations](#recommendations)
   - [Example](#example)
-  - [TODO:](#todo)
 
 ## Installation
 
 `yarn add @pavelgric/react-native-theme-provider`
 
-## Usage with initThemeProvider (Recommended)
+## Usage
 
-### Initialize themes and the theme provider
+### with initThemeProvider (Recommended)
+
+#### Initialize themes and the theme provider
 
 The library provides few functions to help passing down the Theme type
 
@@ -59,6 +66,7 @@ import {
   createThemedUseStyleCreator,
   createThemedUseTheme,
   createThemedUseThemeDispatch,
+  createThemedBaseStylesCreator,
   useStyle,
 } from '@pavelgric/react-native-theme-provider';
 
@@ -74,12 +82,27 @@ const redTheme = {
   }
 }
 
-// you can have as many themes as you want
+// you can have as many themes as you want and their names are up to you
 export const themes = {
   blue: blueTheme,
   red: redTheme,
 };
 
+/* create globally available styles, see further how these can be accessed */
+export const baseStylesCreator = createThemedBaseStylesCreator<Themes>()((t) => ({
+  page: {
+    flex: 1,
+    backgroundColor: t.colors.surface,
+  },
+  flex: {
+    flex: 1,
+  },
+  flexCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}));
 export type Themes = typeof themes;
 export const {
   createUseStyle,
@@ -87,27 +110,72 @@ export const {
   useTheme,
   useThemeDispatch,
   ThemeProvider,
-} = initThemeProvider({ themes, initialTheme: 'light' });
+  /* 
+   * If you want to be able to use `const styles = useStyle(styleCreator, params)`, you currently need to export and use these to work with typescript correctly.
+   * Otherwise use the `export { useStyle };` below. 
+  */
+  // use for `const styles = useStyleThemed(styleCreator)`
+ useStyle: useStyleThemed,
+  // use for `const styles = useStyleThemedWithParams(styleCreator, params)`
+  useStyleWithParams: useStyleThemedWithParams,
+} = initThemeProvider({ themes, initialTheme: 'red', baseStylesCreator });
 
 // useStyle does not depend on Theme, this is just to make it also accessible from here. But you'll probably not gonna use this anyway
 export { useStyle };
 ```
 
-### Wrap your app with exported ThemeProvider
+instead of passing themes as an object, you can also pass a function, which will receive any params you specify.
+This may be useful if you support changing font size or spacing based on phone size, orientation etc.
+These params are not propagated to style creators. If you want to pass params there, use the available solutions.
+
+```ts
+const themes = (params: { fontSizeMultiplier: number}) => {
+  const fontSizes = {
+      // other font sizes
+      medium: fontSizeMultiplier * 15
+  };
+
+  return {
+    light: {
+      // other things
+      fontSizes,
+    },
+    dark: {
+      // other things
+      fontSizes,
+    }
+  }
+};
+
+// will call themes as a function with initialThemeParams
+const result = initThemeProvider({ 
+  themes, 
+  initialThemeParams: {
+    fontSizeMultiplier: 1,
+  }, 
+  initialTheme: 'red'
+});
+```
+
+#### Wrap your app with exported ThemeProvider
 
 ```js
 import { ThemedProvider } from './path/to/themes.ts';
+import { useColorScheme } from 'react-native';
 
 export default App = () => {
+  const colorScheme = useColorScheme();
+
   return (
-    <ThemeProvider>
+    /* You can also overwrite some values passed to initThemeProvider here, e.g. if you want to set initial theme based on systems default color scheme */
+    <ThemeProvider initialTheme={colorScheme === 'dark' : 'red' : 'blue'}>
       <InnerComponent />
     </ThemeProvider>
   );
 };
 ```
 
-### Create style for component
+#### Create style for component
 
 ```tsx
 // InnerComponent.tsx
@@ -126,18 +194,24 @@ const useStyle = createUseStyle((t) => ({
 export default InnerComponent = () => {
   const styles = useStyle();
 
-  return <View style={styles.container} />;
+  return (
+    /* under bs are styles created by baseStylesCreator */
+    <View style={styles.bs.page}>
+      <View style={styles.container} />
+    </View>
+  );
 };
 ```
 
-Alternatively you can use `createStyle` with `useStyle` combination, but it just leads to more code
+Alternatively you can use `createStyle` with `useStyle` combination, but it just leads to more code.
+In order to receive correct types, you need to use `useStyle` and `useStyleWithParams` returned by `initThemeProvider`.
 
 ```tsx
 // InnerComponent.tsx
 
 import React from 'react';
 import { View } from 'react-native';
-import { createStyle, useStyle } from './path/to/themes.ts';
+import { createStyle, useStyleThemed, useStyleThemedWithParams } from './path/to/themes.ts';
 
 // create styleCreator, the passed 't' is current theme object
 const styleCreator = createStyle((t) => ({
@@ -148,13 +222,19 @@ const styleCreator = createStyle((t) => ({
 
 export default InnerComponent = () => {
   // pass the styleCreator
-  const styles = useStyle(styleCreator);
+  const styles = useStyleThemed(styleCreator);
+  // or const styles = useStyleThemedWithParams(styleCreator, params);
 
-  return <View style={styles.container} />;
+  return (
+    /* under bs are styles created by baseStylesCreator */
+    <View style={styles.bs.page}>
+      <View style={styles.container} />
+    </View>
+  );
 };
 ```
 
-### Change or access theme
+#### Change or access theme
 
 ```tsx
 // SomeComponent.tsx
@@ -193,7 +273,47 @@ export default SomeComponent = () => {
 };
 ```
 
-## Usage without initThemeProvider
+#### Change or access theme params
+
+```tsx
+// SomeComponent.tsx
+
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import {
+  useThemeDispatch,
+  useTheme,
+} from './path/to/themes.ts';
+
+export default SomeComponent = () => {
+  // get current themeParams
+  const { themeParams } = useTheme();
+  // to change themeParams
+  const { setThemeParams } = useThemeDispatch();
+
+  return (
+    <View>
+      <Text>{`current font multiplier is ${themeParams.fontSizeMultiplier}`}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setThemeParams(themeParams.fontSizeMultiplier + 1);
+          }}
+        >
+          <Text>make font larger</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setThemeParams(themeParams.fontSizeMultiplier - 1);
+          }}
+        >
+          <Text>make font smaller</Text>
+        </TouchableOpacity>
+    </View>
+  );
+};
+```
+
+### Usage without initThemeProvider
 
 You can theme each function individually like this, but you'll loose typing of the ThemeProvider
 
@@ -207,7 +327,9 @@ import {
   createThemedUseThemeDispatch,
   useStyle,
   createThemedDefaultCacheManager,
-  DefaultCacheManager
+  DefaultCacheManager,
+  createThemedUseStyle,
+  createThemedUseStyleWithParams,
 } from '@pavelgric/react-native-theme-provider';
 
 const blueTheme = {
@@ -222,35 +344,60 @@ const redTheme = {
   }
 }
 
-// you can have as many themes as you want
+// you can have as many themes as you want and their names are up to you
 export const themes = {
   blue: blueTheme,
   red: redTheme,
 };
 
 export type Themes = typeof themes;
-// useStyle does not depend on Theme, this is just to make it also accessible from here
 export { useStyle };
+
+/* create globally available styles, see further how these can be accessed */
+export const baseStylesCreator = createThemedBaseStylesCreator<Themes>()((t) => ({
+  page: {
+    flex: 1,
+    backgroundColor: t.colors.surface,
+  },
+  flex: {
+    flex: 1,
+  },
+  flexCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}));
+type BaseStylesCreator = ReturnType<typeof baseStylesCreator>
 
 // caching of style creators
 const cacheManager = createThemedDefaultCacheManager<Themes>(); // or create your own cacheManager
 
 export const createStyle = createThemedStyleCreator<Themes>(cacheManager); 
 // alternatively export const createStyle = createThemedStyleCreator<Themes>(DefaultCacheManager)
-export const createUseStyle = createThemedUseStyleCreator<Themes>(cacheManager);
+export const createUseStyle = createThemedUseStyleCreator<Themes, BaseStylesCreator>(cacheManager);
 // alternatively export const createStyle = createThemedStyleCreator<Themes>(DefaultCacheManager)
 export const useTheme = createThemedUseTheme<Themes>();
 export const useThemeDispatch = createThemedUseThemeDispatch<Themes>();
+
+// If you want to be able to use `const styles = useStyle(styleCreator, params)`, you currently need to export and use these to work with typescript correctly.
+// use for `const styles = useStyle(styleCreator)`
+export const useStyle = createThemedUseStyle<Themes, BaseStylesCreator>();
+// use for `const styles = useStyleWithParams(styleCreator, params)`
+export const useStyleWithParams = createThemedUseStyleWithParams<Themes, BaseStylesCreator>();
 ```
 
-### Wrap your app with ThemeProvider
+#### Wrap your app with ThemeProvider
 
 ```js
 import { ThemedProvider } from '@pavelgric/react-native-theme-provider';
+import { useColorScheme } from 'react-native';
 
 export default App = () => {
+  const colorScheme = useColorScheme();
+
   return (
-    <ThemeProvider themes={themes} initialTheme="red">
+    <ThemeProvider themes={themes} initialTheme={colorScheme === 'dark' : 'red' : 'blue'}>
       <InnerComponent />
     </ThemeProvider>
   );
@@ -259,7 +406,7 @@ export default App = () => {
 
 Otherwise the usage is the same as with using the `initThemeProvider`
 
-## Usage without any helpers
+### Usage without any helpers
 
 You import functions directly from `@pavelgric/react-native-theme-provider` (`createStyle`, `useStyle`, `createUseStyle` and others). There is no style default caching using library this way. Otherwise the usage of functions is same as above.
 
@@ -323,6 +470,104 @@ export default InnerComponent = () => {
 };
 ```
 
+## Passing and accessing default styles
+
+You can create and access some basic styles like `{ flex: 1 }`, so you don't have to recreate them everywhere over and over again.
+These styles will be passed to you by the `const styles = useStyle()` function and will be (by default) under `styles.bs` key. The `bs` key is reserved and you can't overwrite it in your style creator, meaning you can't have there some `bs: { flex: 1}`. You can change the `bs` key to whatever you like with `baseStylesKey` prop.
+This applies only if you pass the `baseStylesCreator` to the `initThemeProvider` or `ThemeProvider`, it's not required.
+The `bs` object is singleton and is the same in all `styles` objects from `useStyle`.
+
+First create base styles
+
+```ts
+import { createThemedBaseStylesCreator } from '@pavelgric/react-native-theme-provider';
+
+export const themes = {
+  // ...some themes
+}
+
+export const baseStylesCreator = createThemedBaseStylesCreator<typeof themes>()((t) => ({
+  page: {
+    flex: 1,
+    backgroundColor: t.colors.surface,
+  },
+  flex: {
+    flex: 1,
+  },
+  flexCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}));
+```
+
+Pass them either to `initThemeProvider` or `ThemeProvider` directly
+
+```tsx
+export const {
+  createUseStyle,
+  createStyle,
+  useTheme,
+  useThemeDispatch,
+  ThemeProvider,
+} = initThemeProvider({ 
+  themes, 
+  initialTheme: 'red', 
+  baseStylesCreator, 
+  baseStylesKey: 'customBS' // base styles will be then accessible in styles.customBS
+});
+
+// OR
+
+export default App = () => {
+  const colorScheme = useColorScheme();
+
+  return (
+    /* You can also overwrite some values passed to initThemeProvider here, e.g. if you want to set initial theme based on systems default color scheme */
+    <ThemeProvider 
+      baseStylesCreator 
+      initialTheme={colorScheme === 'dark' : 'red' : 'blue'} 
+      baseStylesKey="customBS"
+    >
+      <InnerComponent />
+    </ThemeProvider>
+  );
+};
+```
+
+Access them in your component
+
+```tsx
+// InnerComponent.tsx
+
+import React from 'react';
+import { View } from 'react-native';
+import { createUseStyle } from './path/to/themes.ts';
+
+// createUseStyle basically returns (fn) => useStyle(fn)
+const useStyle = createUseStyle((t) => ({
+  container: {
+    backgroundColor: t.colors.primary,
+  },
+}));
+
+export default InnerComponent = () => {
+  const styles = useStyle();
+
+  return (
+    /* under `customBS` (`bs` by default) key are styles created by baseStylesCreator. */
+    <View style={styles.customBS.page}>
+      <View style={styles.container} />
+    </View>
+  );
+};
+```
+
+## Passing theme params
+
+You can pass custom params to your themes,
+
 ## Exported functions
 
 ### `initThemeProvider`
@@ -366,6 +611,7 @@ export const {
   initialTheme: 'light',
   onThemeChange: (nextThemeName) => {}
   styleCreatorCache: DefaultCacheManager
+  // see table below for other props
 });
 ```
 
@@ -374,8 +620,12 @@ export const {
 | themes | Object | Yes | Themes object containing app themes |
 | initialTheme | String | Yes | Name of one of the theme |
 | onThemeChange | Function | No | Called when theme changes |
+| initialThemeParams | Object | Yes | Initial theme params |
+| themeKey | String | Yes | By default values of selected theme returned by `useTheme` are accessed via `t` keyword, use this prop to change it to other key. E.g. by setting it to `"customT"` you will access theme like this `const { customT } = useTheme()`. Can be useful to avoid name collisions, as `t` is often used with translations |
+| onThemeParamsChange | Function | No | Called when theme params change |
 | styleCacheManager | Object | No | Object with functions to handle style caching. By default uses DefaultCacheManager |
-
+| baseStylesCreator | Function | No | Used to create base styles, which can be accessed in every `styles` object returned from `useStyles` |
+| baseStylesKey | String | No | Used with `baseStylesCreator`. By default the styles are accessible via `bs` keyword, use this prop to change it to other key. E.g. by setting it to `"customBS"` you will access base styles in `styles.customBS` |
 
 ### `createStyle`
 
@@ -449,7 +699,7 @@ export default SomeComponent = () => {
   const {
     selectedTheme, // the key of selected theme
     themes, // the whole themes object
-    t, // current theme object
+    t, // current theme object. This key can be changed by setting `themeKey` in ThemeProvider
   } = useTheme();
   const { setTheme } = useThemeDispatch();
 
@@ -504,6 +754,14 @@ see [Usage without initThemeProvider](#usage-without-initthemeprovider)
 see [Usage without initThemeProvider](#usage-without-initthemeprovider)
 
 ### `createThemedUseThemeDispatch`
+
+see [Usage without initThemeProvider](#usage-without-initthemeprovider)
+
+### `createThemedUseStyle`
+
+see [Usage without initThemeProvider](#usage-without-initthemeprovider)
+
+### `createThemedUseStyleWithParams`
 
 see [Usage without initThemeProvider](#usage-without-initthemeprovider)
 
@@ -713,8 +971,3 @@ To modify the lib code and see changes immediately, do following changes in `./p
   "main": "src/index.ts", // <-- change to this
   "types": "src/index.ts", // <-- change to this
 ```
-
-## TODO:
-
-- [ ] Allow to pass baseStyles to ThemeProvider and use them with `useStyle` hook.
-- [ ] Add tests to verify hook returns and caching

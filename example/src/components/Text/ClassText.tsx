@@ -14,7 +14,7 @@ type Props = TextProps & {
 class Text extends Component<Props> {
   render() {
     const { styles, type, ...textProps } = this.props;
-    const styleByType = type ? styles[type] : {};
+    const styleByType = type && type in styles ? styles[type] : {};
     return (
       <RNText {...textProps} style={[styleByType, textProps.style]}>
         {textProps.children}

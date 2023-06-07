@@ -1,5 +1,4 @@
 import { Theme, Typography } from './variants/themeCreator';
-export { default as useDefaultStyles } from './useDefaultStyles';
 export {
   createStyle,
   createUseStyle,
