@@ -1,4 +1,4 @@
-type ValidateShape<T, Shape> = T extends Shape
+export type ValidateShape<T, Shape> = T extends Shape
   ? Exclude<keyof T, keyof Shape> extends never
     ? T
     : never
