@@ -12,7 +12,8 @@
     "prepare": "husky install",
     "publish": "npm publish --access public",
     "publishNext": "npm publish --access public --tag next",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "release": "release-it"
   },
   "repository": {
     "type": "git",
@@ -52,6 +53,7 @@
     "react": "18.2.0",
     "react-native": "^0.71.8",
     "react-test-renderer": "^18.2.0",
+    "release-it": "^15.11.0",
     "typescript": "^5.0.4"
   },
   "resolutions": {
