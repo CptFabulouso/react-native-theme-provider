@@ -29,6 +29,10 @@
     "url": "https://github.com/CptFabulouso/react-native-theme-provider/issues"
   },
   "homepage": "https://github.com/CptFabulouso/react-native-theme-provider#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",

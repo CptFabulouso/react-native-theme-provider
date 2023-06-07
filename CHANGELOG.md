@@ -1,6 +1,6 @@
 # react-native-theme-provider changelog
 
-## 0.1.3
+## 0.2.0
 
 - Add prop `baseStylesKey` to modify under which key the base styles are stored.
 - Add prop `themeKey` to modify under which key theme object is returned from `useTheme()`
