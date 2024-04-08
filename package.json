@@ -1,6 +1,6 @@
 {
   "name": "@pavelgric/react-native-theme-provider",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Simple theme provider for React Native",
   "main": "lib/src/index.js",
   "types": "lib/src/index.d.ts",
