@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { createThemedBaseStylesCreator, initThemeProvider } from '../creators';
 import { checkStyleWithBS, Themes, themes, ValidateShape } from './common';
+import { createThemedBaseStylesCreator, initThemeProvider } from '../creators';
 
 /* create globally available styles, see further how these can be accessed */
 const baseStylesCreator = createThemedBaseStylesCreator<Themes>()((t) => ({

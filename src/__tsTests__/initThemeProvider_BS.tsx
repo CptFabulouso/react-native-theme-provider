@@ -1,8 +1,8 @@
 import React from 'react';
 
+import { checkStyleWithBS, Themes, themes, styleParams } from './common';
 import { createThemedBaseStylesCreator, initThemeProvider } from '../creators';
 import { useStyle } from '../hooks';
-import { checkStyleWithBS, Themes, themes, styleParams } from './common';
 
 /* create globally available styles, see further how these can be accessed */
 const baseStylesCreator = createThemedBaseStylesCreator<Themes>()((t) => ({

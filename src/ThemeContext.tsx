@@ -79,22 +79,33 @@ export function ThemeProvider<
     [onThemeParamsChange],
   );
 
+  const themeValue = React.useMemo(
+    () => ({
+      selectedTheme: themeName,
+      themes,
+      themeKey,
+      [themeKey]: t,
+      themeParams,
+    }),
+    [themeName, themes, themeKey, t, themeParams],
+  );
+
+  const baseStylesValue = React.useMemo(
+    () => ({
+      baseStyles,
+      baseStylesKey,
+    }),
+    [baseStyles, baseStylesKey],
+  );
+  const themeDispatchValue = React.useMemo(
+    () => ({ setTheme: changeTheme, setThemeParams: changeThemeParams }),
+    [changeTheme, changeThemeParams],
+  );
+
   return (
-    <ThemeContext.Provider
-      value={{
-        selectedTheme: themeName,
-        themes,
-        themeKey,
-        [themeKey]: t,
-        themeParams,
-      }}
-    >
-      <ThemeBaseStylesContext.Provider
-        value={{ baseStyles, baseStylesKey: baseStylesKey }}
-      >
-        <ThemeDispatchContext.Provider
-          value={{ setTheme: changeTheme, setThemeParams: changeThemeParams }}
-        >
+    <ThemeContext.Provider value={themeValue}>
+      <ThemeBaseStylesContext.Provider value={baseStylesValue}>
+        <ThemeDispatchContext.Provider value={themeDispatchValue}>
           {children}
         </ThemeDispatchContext.Provider>
       </ThemeBaseStylesContext.Provider>

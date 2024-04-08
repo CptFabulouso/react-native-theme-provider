@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { checkStyle, themes, Themes, styleParams } from './common';
 import { ThemeProvider } from '../ThemeContext';
 import {
   createThemedStyleCreator,
@@ -8,7 +9,6 @@ import {
   createThemedUseStyle,
   createThemedUseStyleWithParams,
 } from '../creators';
-import { checkStyle, themes, Themes, styleParams } from './common';
 
 const cacheManager = createThemedDefaultCacheManager<Themes>(); // or create your own cacheManager
 

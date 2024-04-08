@@ -1,8 +1,8 @@
 import React from 'react';
 
+import { checkStyle, themes, styleParams } from './common';
 import { initThemeProvider } from '../creators';
 import { useStyle } from '../hooks';
-import { checkStyle, themes, styleParams } from './common';
 
 const {
   createStyle: themedCreateStyle,

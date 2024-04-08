@@ -1,8 +1,8 @@
 import * as React from 'react';
 
+import { checkStyle } from './common';
 import { createUseStyle, createStyle } from '../creators';
 import { withCreateStyle, withUseStyle } from '../wrappers';
-import { checkStyle } from './common';
 
 /* style creators */
 const styleCreator = createStyle((t) => ({

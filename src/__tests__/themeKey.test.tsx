@@ -2,9 +2,9 @@ import { render as defaultRender, screen } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
 
-import { initThemeProvider } from '../creators';
 import { createRenderWithThemeProvider } from './test-utils';
 import { themes, initialThemes } from './theme';
+import { initThemeProvider } from '../creators';
 
 const defaultThemeKeyProps = initThemeProvider({
   themes,
